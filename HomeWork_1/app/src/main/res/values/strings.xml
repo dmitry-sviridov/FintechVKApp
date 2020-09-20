@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">HW 1</string>
+    <string name="contacts_list_is_empty">Contacts list is empty</string>
+</resources>
