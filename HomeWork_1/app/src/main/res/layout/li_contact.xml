@@ -14,7 +14,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tv_contact_name"
+                android:id="@+id/tvContactName"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -22,8 +22,8 @@
                 android:text="Ivanov Ivan Ivanovich" />
 
             <TextView
-                android:id="@+id/tv_contact_phone"
-                android:layout_below="@id/tv_contact_name"
+                android:id="@+id/tvContactPhoneNum"
+                android:layout_below="@id/tvContactName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
