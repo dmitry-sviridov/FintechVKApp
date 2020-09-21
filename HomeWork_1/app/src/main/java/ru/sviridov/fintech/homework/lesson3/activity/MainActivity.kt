@@ -37,17 +37,19 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_GET_CONTACTS) {
             Log.d(TAG, "onActivityResult: Correct request code")
             if (resultCode == RESULT_OK) {
-                val contacts = data?.getParcelableArrayListExtra<Contact>(EXTRA_CONTACTS)
+                val contacts = requireNotNull(data?.getParcelableArrayListExtra<Contact>(EXTRA_CONTACTS))
                 Log.d(TAG, "onActivityResult: Result code = OK, Data = $contacts")
+                handleContacts(contacts)
+            }
+        }
+    }
 
-                if (!contacts.isNullOrEmpty()) {
-                    tv_contacts_list_empty.visibility = View.GONE
-                    rv_contacts.apply {
-                        layoutManager = LinearLayoutManager(this@MainActivity)
-                        adapter = ContactListAdapter(contacts)
-                    }
-                }
-
+    private fun handleContacts(contacts: List<Contact>) {
+        if (contacts.isNotEmpty()) {
+            tv_contacts_list_empty.visibility = View.GONE
+            rv_contacts.apply {
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                adapter = ContactListAdapter(contacts)
             }
         }
     }

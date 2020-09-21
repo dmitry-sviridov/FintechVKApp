@@ -27,7 +27,9 @@ class SecondActivity : AppCompatActivity() {
         private val TAG = SecondActivity::class.simpleName
     }
 
-    private lateinit var localBroadcastManager: LocalBroadcastManager
+    private val localBroadcastManager: LocalBroadcastManager by lazy {
+        LocalBroadcastManager.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,7 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
-    var contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private var contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Log.d(TAG, "onReceive: intent is not null = ${intent != null}")
             intent?.let {
@@ -55,7 +57,6 @@ class SecondActivity : AppCompatActivity() {
     }
     override fun onStart() {
         super.onStart()
-        localBroadcastManager = LocalBroadcastManager.getInstance(this)
         localBroadcastManager
             .registerReceiver(contactsReceiver, IntentFilter(SEND_BROADCAST_CONTACTS_LIST))
     }
