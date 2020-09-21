@@ -16,7 +16,7 @@ class ContactListAdapter(private val list: List<Contact>)
     ): ContactListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.li_contact, parent, false)
-        return ContactListViewHolder(itemView, parent)
+        return ContactListViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ContactListViewHolder, position: Int)
@@ -25,7 +25,7 @@ class ContactListAdapter(private val list: List<Contact>)
     override fun getItemCount(): Int = list.size
 }
 
-class ContactListViewHolder(itemView: View, parent: ViewGroup) :
+class ContactListViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
     fun bind(contact: Contact) {
