@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:elevation="4dp"
+    android:layout_margin="8dp"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:elevation="4dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tvContactName"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            tool:text="Ivanov Ivan Ivanovich"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvContactName"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Ivanov Ivan Ivanovich" />
+        <TextView
+            android:id="@+id/tvContactPhoneNum"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            tool:text="+7 (999) 999-99-99" />
 
-            <TextView
-                android:id="@+id/tvContactPhoneNum"
-                android:layout_below="@id/tvContactName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="+7 (999) 999-99-99" />
+    </LinearLayout>
 
-        </RelativeLayout>
-
-    </androidx.cardview.widget.CardView>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
