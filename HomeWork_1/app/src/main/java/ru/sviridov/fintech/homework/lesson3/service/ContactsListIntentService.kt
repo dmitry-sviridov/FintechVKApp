@@ -18,9 +18,11 @@ class ContactsListIntentService : JobIntentService() {
     companion object {
         private val TAG = ContactsListIntentService::class.simpleName
 
+        private const val CONTACT_HAS_PHONE_NUMBER_LABEL = "1"
+
         @JvmStatic
-        fun enqueueWork(ctx: Context, work: Intent) {
-            enqueueWork(ctx, ContactsListIntentService::class.java, JOB_ID_GET_CONTACTS, work)
+        fun enqueueWork(context: Context, work: Intent) {
+            enqueueWork(context, ContactsListIntentService::class.java, JOB_ID_GET_CONTACTS, work)
         }
     }
 
@@ -39,18 +41,19 @@ class ContactsListIntentService : JobIntentService() {
         val uri = ContactsContract.Contacts.CONTENT_URI
         val cursor = contentResolver.query(uri, null, null, null, null)
         cursor?.let {
-            Log.d(TAG, "getContacts: count = ${it.count}")
+            Log.d(TAG, "getContacts: count = ${cursor.count}")
 
-            it.moveToPosition(-1) // set cursor before the first row
+            cursor.moveToPosition(-1) // set cursor before the first row
 
-            while (it.moveToNext()) {
-                val id = it.getString(it.getColumnIndex(ContactsContract.Contacts._ID))
-                val displayName = it.getStringOrNull(
-                        it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+            while (cursor.moveToNext()) {
+                val id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                val displayName = cursor.getStringOrNull(
+                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                 var phoneNumber: String? = null
 
-                if (it.getStringOrNull(
-                                it.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) == "1") {
+                if (cursor.getStringOrNull(
+                        cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)
+                    ) == CONTACT_HAS_PHONE_NUMBER_LABEL) {
                     phoneNumber = readPhoneNumber(id)
                 }
                 contactList.add(Contact(id, displayName, phoneNumber))
