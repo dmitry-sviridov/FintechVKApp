@@ -6,18 +6,17 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.sviridov.fintech.homework.lesson3.R
 import ru.sviridov.fintech.homework.lesson3.adapter.ContactListAdapter
 import ru.sviridov.fintech.homework.lesson3.common.EXTRA_CONTACTS
-import ru.sviridov.fintech.homework.lesson3.common.REQUEST_CODE_GET_CONTACTS
 import ru.sviridov.fintech.homework.lesson3.dto.Contact
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = MainActivity::class.simpleName
+        private const val REQUEST_CODE_GET_CONTACTS = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_GET_CONTACTS) {
             Log.d(TAG, "onActivityResult: Correct request code")
             if (resultCode == RESULT_OK) {
-                val contacts = requireNotNull(data?.getParcelableArrayListExtra<Contact>(EXTRA_CONTACTS))
+                val contacts =
+                    requireNotNull(data?.getParcelableArrayListExtra<Contact>(EXTRA_CONTACTS))
                 Log.d(TAG, "onActivityResult: Result code = OK, Data = $contacts")
                 handleContacts(contacts)
             }

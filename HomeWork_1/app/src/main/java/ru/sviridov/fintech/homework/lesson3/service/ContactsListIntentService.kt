@@ -9,7 +9,6 @@ import androidx.core.app.JobIntentService
 import androidx.core.database.getStringOrNull
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ru.sviridov.fintech.homework.lesson3.common.EXTRA_CONTACTS
-import ru.sviridov.fintech.homework.lesson3.common.JOB_ID_GET_CONTACTS
 import ru.sviridov.fintech.homework.lesson3.common.SEND_BROADCAST_CONTACTS_LIST
 import ru.sviridov.fintech.homework.lesson3.dto.Contact
 
@@ -17,7 +16,7 @@ class ContactsListIntentService : JobIntentService() {
 
     companion object {
         private val TAG = ContactsListIntentService::class.simpleName
-
+        private const val JOB_ID_GET_CONTACTS = 101
         private const val CONTACT_HAS_PHONE_NUMBER_LABEL = "1"
 
         @JvmStatic

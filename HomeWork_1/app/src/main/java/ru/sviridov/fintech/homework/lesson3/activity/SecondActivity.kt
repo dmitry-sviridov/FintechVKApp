@@ -14,10 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ru.sviridov.fintech.homework.lesson3.R
-import ru.sviridov.fintech.homework.lesson3.common.EXTRA_CONTACTS
-import ru.sviridov.fintech.homework.lesson3.common.REQUEST_CODE_GET_READ_CONTACTS_PERMISSION
 import ru.sviridov.fintech.homework.lesson3.common.SEND_BROADCAST_CONTACTS_LIST
-import ru.sviridov.fintech.homework.lesson3.dto.Contact
 import ru.sviridov.fintech.homework.lesson3.service.ContactsListIntentService
 
 
@@ -25,6 +22,7 @@ class SecondActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = SecondActivity::class.simpleName
+        private const val REQUEST_CODE_GET_READ_CONTACTS_PERMISSION = 1002
     }
 
     private val localBroadcastManager: LocalBroadcastManager by lazy {
