@@ -44,7 +44,7 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
-    private var contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private val contactsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Log.d(TAG, "onReceive: intent is not null = ${intent != null}")
             intent?.let {
@@ -53,6 +53,7 @@ class SecondActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onStart() {
         super.onStart()
         localBroadcastManager
