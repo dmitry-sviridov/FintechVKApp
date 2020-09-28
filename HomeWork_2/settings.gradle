@@ -1,0 +1,3 @@
+include ':ui-common'
+include ':app'
+rootProject.name = "VkClient"
