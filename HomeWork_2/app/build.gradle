@@ -31,9 +31,13 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:$androidXCoreKtxVersion"
-    implementation "androidx.appcompat:appcompat:$androidXAppCompatVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintVersion"
+    implementation(
+        project(path: ':ui-common'),
+
+        "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+        "androidx.core:core-ktx:$androidXCoreKtxVersion",
+        "androidx.appcompat:appcompat:$androidXAppCompatVersion",
+        "com.google.android.material:material:$materialVersion",
+        "androidx.constraintlayout:constraintlayout:$constraintVersion"
+    )
 }
