@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:parentTag="ru.sviridov.ui_common.FeedItemLayout">
+    tools:parentTag="ru.sviridov.newsfeed.presentation.layout.FeedItemLayout">
 
     <!--    region Feed title-->
     <ImageView

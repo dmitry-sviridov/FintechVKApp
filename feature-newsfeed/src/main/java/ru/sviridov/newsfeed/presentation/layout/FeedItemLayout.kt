@@ -1,4 +1,4 @@
-package ru.sviridov.ui_common
+package ru.sviridov.newsfeed.presentation.layout
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.core.view.*
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
+import ru.sviridov.newsfeed.R
 
 class FeedItemLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
