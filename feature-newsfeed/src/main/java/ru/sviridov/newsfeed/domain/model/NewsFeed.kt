@@ -1,17 +1,20 @@
 package ru.sviridov.newsfeed.domain.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class NewsFeed(
-    val attachments: List<Attachment>,
-    val comments: Comments,
+    var attachments: List<Attachment>? = emptyList(),
+    var comments: Comments?,
     val date: Int,
-    val likes: Likes,
+    var likes: Likes?,
     val marked_as_ads: Int,
     val post_id: Int,
-    val post_source: PostSource,
-    val post_type: String,
-    val reposts: Reposts,
-    val source_id: Int,
-    val text: String,
-    val type: String,
-    val views: Views
+    var post_source: PostSource?,
+    var post_type: String?,
+    var reposts: Reposts?,
+    var source_id: Int?,
+    var text: String?,
+    var type: String?,
+    var views: Views?
 )

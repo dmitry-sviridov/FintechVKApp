@@ -1,11 +1,11 @@
 package ru.sviridov.newsfeed.presentation.adapter.item
 
 data class NewsItem(
-    val sourceTitle: String,
+    var sourceTitle: String,
     val postedAt: String,
-    val sourceAvatar: String,
-    val imageUrl: String?,
-    val textContent: String?,
+    var sourceAvatar: String,
+    var imageUrl: String?,
+    var textContent: String?,
     val likesCount: Int,
     val shareCount: Int,
     val commentCount: Int,
