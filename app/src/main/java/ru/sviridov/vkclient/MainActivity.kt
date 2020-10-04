@@ -2,7 +2,7 @@ package ru.sviridov.vkclient
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.sviridov.newsfeed.FeedFragment
+import ru.sviridov.newsfeed.presentation.FeedFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -8,7 +8,7 @@ import ru.sviridov.newsfeed.domain.NewsFeedRepository
 import ru.sviridov.newsfeed.domain.dto.NewsResponse
 import ru.sviridov.newsfeed.fromFile
 
-class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager) : NewsFeedRepository {
+internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager) : NewsFeedRepository {
 
     override fun fetchNews(filter: Any?): NewsResponse {
         val jsonString = fromFile("posts.json", assetManager = assetManager)

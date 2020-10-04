@@ -1,10 +1,11 @@
-package ru.sviridov.newsfeed
+package ru.sviridov.newsfeed.presentation
 
 import android.content.res.AssetManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryFakeImpl
+import ru.sviridov.newsfeed.mapResponseToItem
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
 class FeedViewModel(assetManager: AssetManager): ViewModel() {
@@ -13,7 +14,9 @@ class FeedViewModel(assetManager: AssetManager): ViewModel() {
 
     private var newsItems = MutableLiveData<List<NewsItem>>()
 
-    fun getFeedItems() {
+    fun getNewsItems() = newsItems
+
+    fun updateNewsFeed() {
         val newsResponse = feedRepository.fetchNews(null)
         val items = mapResponseToItem(newsResponse)
         newsItems.value = items

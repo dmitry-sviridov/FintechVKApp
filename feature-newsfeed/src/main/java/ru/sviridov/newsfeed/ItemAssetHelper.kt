@@ -2,6 +2,7 @@ package ru.sviridov.newsfeed
 
 import android.content.res.AssetManager
 import ru.sviridov.newsfeed.domain.dto.NewsResponse
+import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import kotlin.math.abs
 
@@ -36,4 +37,20 @@ fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
     }
 
     return newsItems
+}
+
+fun NewsItem.getItemType(): NewsFeedViewType {
+    when {
+        this.textContent.isNullOrEmpty() -> {
+            if (!this.imageUrl.isNullOrBlank()) return NewsFeedViewType.VIEW_WITH_SINGLE_PICTURE_ONLY
+        }
+        else -> {
+            return if (this.imageUrl.isNullOrEmpty()) {
+                NewsFeedViewType.VIEW_WITH_TEXT_ONLY
+            } else {
+                NewsFeedViewType.VIEW_WITH_SINGLE_PICTURE_AND_TEXT
+            }
+        }
+    }
+    return NewsFeedViewType.UNKNOWN
 }
