@@ -13,13 +13,18 @@ class FeedViewModel(assetManager: AssetManager): ViewModel() {
     private val feedRepository = NewsFeedRepositoryFakeImpl(assetManager = assetManager)
 
     private var newsItems = MutableLiveData<List<NewsItem>>()
+    private var hiddenItems = mutableSetOf<NewsItem>()
 
     fun getNewsItems() = newsItems
 
     fun updateNewsFeed() {
         val newsResponse = feedRepository.fetchNews(null)
-        val items = mapResponseToItem(newsResponse)
+        val items = mapResponseToItem(newsResponse).minus(hiddenItems)
         newsItems.value = items
+    }
+
+    fun markItemAsHidden(item: NewsItem) {
+        hiddenItems.add(item)
     }
 
 }

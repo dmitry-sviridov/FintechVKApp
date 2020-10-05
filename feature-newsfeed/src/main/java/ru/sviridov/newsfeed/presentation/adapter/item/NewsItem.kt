@@ -6,8 +6,9 @@ data class NewsItem(
     var sourceAvatar: String,
     var imageUrl: String?,
     var textContent: String?,
-    val likesCount: Int,
+    var likesCount: Int,
     val shareCount: Int,
     val commentCount: Int,
-    val viewsCount: Int
+    val viewsCount: Int,
+    var isLiked: Boolean? = null
 )

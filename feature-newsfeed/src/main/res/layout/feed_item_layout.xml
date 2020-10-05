@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
         app:drawableLeftCompat="@drawable/ic_social_like_disabled"
-        app:drawableTint="@color/social_buttons_grey"
+        android:hapticFeedbackEnabled="true"
         tools:text="124.3K" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
         app:drawableLeftCompat="@drawable/ic_social_comments"
-        app:drawableTint="@color/social_buttons_grey"
+        android:hapticFeedbackEnabled="true"
         tools:text="100K" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
         app:drawableLeftCompat="@drawable/ic_social_repost_disabled"
-        app:drawableTint="@color/social_buttons_grey"
+        android:hapticFeedbackEnabled="true"
         tools:text="599" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -95,7 +95,6 @@
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
         app:drawableLeftCompat="@drawable/ic_social_views_count"
-        app:drawableTint="@color/social_buttons_grey"
         tools:text="230" />
     <!--    endregion-->
 

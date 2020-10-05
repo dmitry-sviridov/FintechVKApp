@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
 import ru.sviridov.newsfeed.R
@@ -114,9 +115,9 @@ class FeedItemLayout @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        var currentLeft = l + paddingLeft
-        var currentTop = t + paddingTop
-        val width = r - l - paddingLeft - paddingRight
+        var currentLeft = 0 + paddingLeft
+        var currentTop = 0 + paddingTop
+        val width = r - 0 - paddingLeft - paddingRight
 
         avatarView.layout(
             currentLeft + avatarView.marginLeft,
@@ -154,7 +155,7 @@ class FeedItemLayout @JvmOverloads constructor(
             baseLine + postCreatedAgoTextView.measuredHeight
         )
 
-        currentLeft = l + paddingLeft
+        currentLeft = 0 + paddingLeft
 
         if (postItemTextView.text.isNotEmpty()) {
             postItemTextView.layout(
@@ -166,15 +167,14 @@ class FeedItemLayout @JvmOverloads constructor(
             currentTop += postItemTextView.measuredHeight + postItemTextView.marginTop + postItemTextView.marginBottom
         }
 
-        if (postImageContainerView.drawable != null) {
-            postImageContainerView.layout(
-                currentLeft,
-                currentTop,
-                r,
-                currentTop + postImageContainerView.measuredHeight
-            )
-            currentTop += postImageContainerView.measuredHeight
-        }
+        postImageContainerView.layout(
+            currentLeft,
+            currentTop,
+            r,
+            currentTop + postImageContainerView.measuredHeight
+        )
+        currentTop += postImageContainerView.measuredHeight
+
 
         val socialBlockWidth = (width - socialLikesView.marginLeft) / 11 * 3
         currentLeft += socialLikesView.marginLeft
@@ -211,6 +211,16 @@ class FeedItemLayout @JvmOverloads constructor(
             r - paddingRight + socialViewsCountView.measuredWidth,
             currentTop + socialViewsCountView.measuredHeight
         )
+    }
+
+    fun setLikeButtonEnabled() {
+        val drawable = ContextCompat.getDrawable(context, R.drawable.ic_social_like_enabled)
+        socialLikesView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    fun setLikeButtonDisabled() {
+        val drawable = ContextCompat.getDrawable(context, R.drawable.ic_social_like_disabled)
+        socialLikesView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?) = MarginLayoutParams(context, attrs)

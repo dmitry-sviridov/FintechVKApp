@@ -1,42 +1,28 @@
 package ru.sviridov.newsfeed.presentation.adapter
 
-import android.graphics.drawable.Drawable
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
-import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.getItemType
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType.*
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
-import java.lang.RuntimeException
 
-class FeedAdapter : ListAdapter<NewsItem, FeedAdapter.BaseViewHolder>(DIFF_CALLBACK) {
 
-    companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<NewsItem>() {
-            override fun areItemsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
-                return oldItem == newItem
-            }
+class FeedAdapter(val callback: AdapterCallback) : RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
+    ItemTouchHelperAdapter {
 
-            override fun areContentsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
-                return (oldItem.postedAt == newItem.postedAt &&
-                        oldItem.textContent == newItem.textContent &&
-                        oldItem.imageUrl == newItem.imageUrl)
-            }
+    private val differ = AsyncListDiffer(this, FeedDiffUtilsCallback())
+    var newsList : List<NewsItem>
+        set(value) {
+            differ.submitList(value)
         }
+        get() = differ.currentList
 
-        private val TAG = this.javaClass.simpleName
+    fun submitList(data: List<NewsItem>, onSuccess: () -> Unit) {
+        differ.submitList(data, onSuccess)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
@@ -55,52 +41,55 @@ class FeedAdapter : ListAdapter<NewsItem, FeedAdapter.BaseViewHolder>(DIFF_CALLB
         }
     }
 
+    override fun getItemCount(): Int = newsList.size
+
     override fun getItemViewType(position: Int): Int {
-        return getItem(position).getItemType().value
+        return newsList[position].getItemType().value
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(newsList[position])
     }
 
-    abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    // Using payload broke the behaviour of swipe-to-like
+    override fun onBindViewHolder(
+        holder: BaseViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (!payloads.isNullOrEmpty()) {
+            if (payloads.first() is Boolean) {
+                holder.bind(newsList[position], payloads.first() as Boolean)
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
+    interface AdapterCallback {
+        fun onItemHided(item: NewsItem)
+    }
+
+    abstract inner class BaseViewHolder(view: FeedItemLayout) : RecyclerView.ViewHolder(view) {
         // Single method for each view holder
         fun bind(item: NewsItem) {
-            Log.d(TAG, "bind: $item")
-            itemView.apply {
+            (itemView as FeedItemLayout).apply {
                 postWriterTitleTextView.text = item.sourceTitle
                 postCreatedAgoTextView.text = item.postedAt
                 socialLikesView.text = item.likesCount.toString()
                 socialRepostsView.text = item.shareCount.toString()
                 socialCommentsView.text = item.commentCount.toString()
                 socialViewsCountView.text = item.viewsCount.toString()
-
+                item.isLiked?.let {
+                    if (it) {
+                        this.setLikeButtonEnabled()
+                    } else {
+                        this.setLikeButtonDisabled()
+                    }
+                }
                 Glide.with(context)
                     .load(item.sourceAvatar)
                     .circleCrop()
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.d(TAG, "onLoadFailed: ")
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.d(TAG, "onResourceReady: ")
-                            return false
-                        }
-
-                    })
                     .into(avatarView)
 
                 item.textContent?.let {
@@ -110,37 +99,48 @@ class FeedAdapter : ListAdapter<NewsItem, FeedAdapter.BaseViewHolder>(DIFF_CALLB
                 item.imageUrl?.let {
                     Glide.with(context)
                         .load(it)
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Log.d(TAG, "onLoadFailed: ")
-                                return false
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Log.d(TAG, "onResourceReady: ")
-                                return false
-                            }
-
-                        })
                         .into(postImageContainerView)
+                }
+            }
+        }
+
+        // Using payload broke the behaviour of swipe-to-like
+        fun bind(item: NewsItem, becameLiked: Boolean) {
+            (itemView as FeedItemLayout).apply {
+                if (becameLiked) {
+                    this.setLikeButtonEnabled()
+                } else {
+                    this.setLikeButtonDisabled()
                 }
             }
         }
     }
 
     // Multiple child classes for demonstration.
-    class TextPostViewHolder(view: View) : BaseViewHolder(view)
-    class ImageWithTextPostViewHolder(view: View) : BaseViewHolder(view)
-    class ImagePostViewHolder(view: View) : BaseViewHolder(view)
+    inner class TextPostViewHolder(view: FeedItemLayout) : BaseViewHolder(view)
+    inner class ImageWithTextPostViewHolder(view: FeedItemLayout) : BaseViewHolder(view)
+    inner class ImagePostViewHolder(view: FeedItemLayout) : BaseViewHolder(view)
+
+    override fun onItemDismiss(position: Int) {
+        // Couldn't remove item from original list
+        callback.onItemHided(newsList[position])
+        val newList = newsList.toMutableList()
+        newList.removeAt(position)
+        differ.submitList(newList)
+    }
+
+    override fun onItemApprove(position: Int) {
+        // There will be an api call to notify backend about user likes this item
+        if (newsList[position].isLiked != true) {
+            newsList[position].isLiked = true
+            newsList[position].likesCount++
+        } else {
+            newsList[position].isLiked = false
+            newsList[position].likesCount--
+        }
+
+        notifyItemChanged(position)
+//        Using payload brokes the behaviour of swipe-to-like
+//        notifyItemChanged(position, listOf(newsList[position].isLiked))
+    }
 }

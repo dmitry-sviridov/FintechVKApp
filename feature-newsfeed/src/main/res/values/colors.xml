@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="social_buttons_grey">#D8D8D8</color>
+    <color name="divider_grey">#EFEFEF</color>
+    <color name="swipe_to_delete">#FFCCBC</color>
+    <color name="swipe_to_like">#C8E6C9</color>
+    <color name="swipe_to_dislike">#F48FB1</color>
 </resources>

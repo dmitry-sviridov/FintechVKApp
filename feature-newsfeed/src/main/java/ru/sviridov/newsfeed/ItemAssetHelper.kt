@@ -10,6 +10,7 @@ fun fromFile(fileName: String, assetManager: AssetManager): String =
     assetManager.open(fileName).bufferedReader().use { it.readText() }
 
 
+// TODO: refactor this bullshit after migration to Rx
 fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
     val newsItems = response.items.asSequence().map {
         NewsItem(
@@ -25,7 +26,6 @@ fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
         )
     }.toMutableList()
 
-    // TODO: refactor this bullshit after migration to Rx
     newsItems.forEach {
         it.sourceTitle = response.groups.first {  group -> group.id == abs(it.sourceTitle.toInt())  }.name
         it.sourceAvatar = response.groups.first { group -> group.name == it.sourceTitle }.photo_50
