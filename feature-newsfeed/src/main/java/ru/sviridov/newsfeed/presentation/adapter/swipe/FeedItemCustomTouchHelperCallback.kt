@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 
+
 // TODO: Fix flashing bug on swipe to like/dislike
 class FeedItemCustomTouchHelperCallback(
     private val adapter: FeedAdapter,
@@ -53,6 +54,7 @@ class FeedItemCustomTouchHelperCallback(
         isCurrentlyActive: Boolean
     ) {
         val itemView = viewHolder.itemView
+
         // left swipe case
         if (dX < 0) {
             colorDrawableBackground = colorHideDrawableBackground
@@ -99,7 +101,12 @@ class FeedItemCustomTouchHelperCallback(
         if (dX > 0)
             c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
         else
-            c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+            c.clipRect(
+                itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
 
         icon.draw(c)
 

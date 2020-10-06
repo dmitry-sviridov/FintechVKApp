@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.*
-import androidx.recyclerview.widget.DiffUtil.calculateDiff
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
-import ru.sviridov.newsfeed.presentation.adapter.FeedDiffUtilsCallback
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 
@@ -58,6 +58,7 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
             layoutManager = LinearLayoutManager(this.context)
             adapter = feedAdapter
             addItemDecoration(dividerItemDecoration)
+            itemAnimator?.changeDuration = 50
         }
 
         viewModel.getNewsItems().observe(viewLifecycleOwner, {

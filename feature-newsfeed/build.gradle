@@ -34,21 +34,26 @@ android {
 dependencies {
     implementation (
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+
         "androidx.core:core-ktx:$androidXCoreKtxVersion",
+        "androidx.fragment:fragment-ktx:$androidXFragmentKtxVersion",
+
         "androidx.appcompat:appcompat:$androidXAppCompatVersion",
         "com.google.android.material:material:$materialVersion",
+
         "androidx.constraintlayout:constraintlayout:$constraintVersion",
+        "androidx.recyclerview:recyclerview:$recyclerVersion",
+        "androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshVersion",
 
         // JSON
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+",
-        'com.fasterxml.jackson.core:jackson-core:2.11.3',
-        'com.fasterxml.jackson.core:jackson-annotations:2.11.3',
-        'com.fasterxml.jackson.core:jackson-databind:2.11.3'
-    )
-    implementation 'androidx.fragment:fragment-ktx:1.2.5'
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+        "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
 
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+        // Glide
+        "com.github.bumptech.glide:glide:$glideVersion"
+    )
+
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 }

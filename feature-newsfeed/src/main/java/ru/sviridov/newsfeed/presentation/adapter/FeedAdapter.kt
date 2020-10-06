@@ -104,7 +104,7 @@ class FeedAdapter(val callback: AdapterCallback) : RecyclerView.Adapter<FeedAdap
             }
         }
 
-        // Using payload broke the behaviour of swipe-to-like
+        // Using payload broke the behaviour of swipe-to-like: card don't return back after swipe
         fun bind(item: NewsItem, becameLiked: Boolean) {
             (itemView as FeedItemLayout).apply {
                 if (becameLiked) {
@@ -140,7 +140,7 @@ class FeedAdapter(val callback: AdapterCallback) : RecyclerView.Adapter<FeedAdap
         }
 
         notifyItemChanged(position)
-//        Using payload brokes the behaviour of swipe-to-like
+//        Using payload brokes the behaviour of swipe-to-like: card don't return back after swipe
 //        notifyItemChanged(position, listOf(newsList[position].isLiked))
     }
 }
