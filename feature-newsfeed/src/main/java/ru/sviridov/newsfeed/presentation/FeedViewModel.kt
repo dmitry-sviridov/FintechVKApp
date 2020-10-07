@@ -8,7 +8,7 @@ import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryFakeImpl
 import ru.sviridov.newsfeed.mapResponseToItem
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
-class FeedViewModel(assetManager: AssetManager): ViewModel() {
+class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
     private val feedRepository = NewsFeedRepositoryFakeImpl(assetManager = assetManager)
 
@@ -29,6 +29,7 @@ class FeedViewModel(assetManager: AssetManager): ViewModel() {
 
 }
 
-class FeedViewModelFactory(private val assetManager: AssetManager): ViewModelProvider.NewInstanceFactory() {
+class FeedViewModelFactory(private val assetManager: AssetManager) :
+    ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = FeedViewModel(assetManager) as T
 }

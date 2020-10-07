@@ -33,7 +33,7 @@ class FeedItemLayout @JvmOverloads constructor(
         )
 
         heightConstraints += (avatarView.measuredHeight + avatarView.marginTop + avatarView.marginBottom)
-        widthConstraints += (avatarView.measuredWidth + avatarView.marginLeft + avatarView.marginRight)
+        widthConstraints += (avatarView.measuredWidth + avatarView.marginStart + avatarView.marginEnd)
 
         measureChildWithMargins(
             postItemMenu,
@@ -43,7 +43,7 @@ class FeedItemLayout @JvmOverloads constructor(
             0
         )
 
-        widthConstraints += (postItemMenu.measuredWidth + postItemMenu.marginLeft)
+        widthConstraints += (postItemMenu.measuredWidth + postItemMenu.marginStart)
 
         measureChildWithMargins(
             postWriterTitleTextView,
@@ -61,7 +61,7 @@ class FeedItemLayout @JvmOverloads constructor(
             0
         )
 
-        if (postItemTextView.text.isNotEmpty()) {
+        if (!postItemTextView.text.isNullOrEmpty()) {
             measureChildWithMargins(
                 postItemTextView, widthMeasureSpec, 0, heightMeasureSpec, heightConstraints
             )
@@ -120,17 +120,19 @@ class FeedItemLayout @JvmOverloads constructor(
         val width = r - 0 - paddingLeft - paddingRight
 
         avatarView.layout(
-            currentLeft + avatarView.marginLeft,
+            currentLeft + avatarView.marginStart,
             currentTop + avatarView.marginTop,
-            currentLeft + avatarView.measuredWidth + avatarView.marginRight,
+            currentLeft + avatarView.measuredWidth + avatarView.marginEnd,
             currentTop + avatarView.measuredHeight + avatarView.marginBottom
         )
 
-        currentTop += avatarView.measuredHeight + avatarView.marginTop + avatarView.marginBottom
-        currentLeft += avatarView.marginLeft + avatarView.measuredWidth + avatarView.marginRight
+        val avatarHeightIncludingPadding =
+            avatarView.measuredHeight + avatarView.marginTop + avatarView.marginBottom
+        currentTop += avatarHeightIncludingPadding
+        currentLeft += avatarView.marginStart + avatarView.measuredWidth + avatarView.marginEnd
 
         val baseLine =
-            (avatarView.measuredHeight + avatarView.marginTop + avatarView.marginBottom) / 2
+            (avatarHeightIncludingPadding) / 2
         val menuBaseLine =
             (baseLine - postWriterTitleTextView.measuredHeight / 2 + postItemMenu.measuredHeight / 2)
 
@@ -159,9 +161,9 @@ class FeedItemLayout @JvmOverloads constructor(
 
         if (postItemTextView.text.isNotEmpty()) {
             postItemTextView.layout(
-                currentLeft + postItemTextView.marginLeft,
+                currentLeft + postItemTextView.marginStart,
                 currentTop,
-                currentLeft + postItemTextView.measuredWidth + postItemTextView.marginRight,
+                currentLeft + postItemTextView.measuredWidth + postItemTextView.marginEnd,
                 currentTop + postItemTextView.measuredHeight
             )
             currentTop += postItemTextView.measuredHeight + postItemTextView.marginTop + postItemTextView.marginBottom
@@ -176,7 +178,7 @@ class FeedItemLayout @JvmOverloads constructor(
         currentTop += postImageContainerView.measuredHeight
 
 
-        val socialBlockWidth = (width - socialLikesView.marginLeft) / 11 * 3
+        val socialBlockWidth = getSocialBlockWidth(width - socialLikesView.marginLeft)
         currentLeft += socialLikesView.marginLeft
 
         socialLikesView.layout(
@@ -221,6 +223,11 @@ class FeedItemLayout @JvmOverloads constructor(
     fun setLikeButtonDisabled() {
         val drawable = ContextCompat.getDrawable(context, R.drawable.ic_social_like_disabled)
         socialLikesView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    private fun getSocialBlockWidth(availableWidth: Int): Int {
+        val part = availableWidth / 11
+        return part * 3
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?) = MarginLayoutParams(context, attrs)

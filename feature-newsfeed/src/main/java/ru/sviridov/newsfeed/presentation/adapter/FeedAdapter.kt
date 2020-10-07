@@ -11,11 +11,12 @@ import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
 
 
-class FeedAdapter(val callback: AdapterCallback) : RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
+class FeedAdapter(val callback: AdapterCallback) :
+    RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
     ItemTouchHelperAdapter {
 
     private val differ = AsyncListDiffer(this, FeedDiffUtilsCallback())
-    var newsList : List<NewsItem>
+    var newsList: List<NewsItem>
         set(value) {
             differ.submitList(value)
         }

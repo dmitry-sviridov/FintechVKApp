@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 
-
-// TODO: Fix flashing bug on swipe to like/dislike
 class FeedItemCustomTouchHelperCallback(
     private val adapter: FeedAdapter,
     private val context: Context

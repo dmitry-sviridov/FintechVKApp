@@ -27,12 +27,13 @@ fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
     }.toMutableList()
 
     newsItems.forEach {
-        it.sourceTitle = response.groups.first {  group -> group.id == abs(it.sourceTitle.toInt())  }.name
+        it.sourceTitle =
+            response.groups.first { group -> group.id == abs(it.sourceTitle.toInt()) }.name
         it.sourceAvatar = response.groups.first { group -> group.name == it.sourceTitle }.photo_50
         it.imageUrl = response.items.firstOrNull { item ->
             item.text == it.textContent
-        }?.attachments?.firstOrNull {
-            attachment -> attachment.type == "photo"
+        }?.attachments?.firstOrNull { attachment ->
+            attachment.type == "photo"
         }?.photo?.sizes?.maxByOrNull { by -> by.height }?.url
     }
 
