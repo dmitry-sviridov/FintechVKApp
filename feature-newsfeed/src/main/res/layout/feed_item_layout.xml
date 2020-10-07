@@ -12,8 +12,7 @@
         android:id="@+id/avatarView"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_margin="8dp"
-        tools:src="@drawable/ic_launcher" />
+        android:layout_margin="8dp" />
 
     <TextView
         android:id="@+id/postWriterTitleTextView"
@@ -21,16 +20,14 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textStyle="bold"
-        tools:text="РосПил - война коррупции - Алексей Навальный" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/postCreatedAgoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLines="1"
-        tools:text="12 minutes ago" />
+        android:maxLines="1" />
 
     <ImageView
         android:id="@+id/postItemMenu"
@@ -46,35 +43,30 @@
         android:id="@+id/postItemTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        tools:text="This is text content of this feed post \nOne two three four five six seven eight nine ten. Look at awesome lake below." />
+        android:layout_margin="8dp" />
 
     <ImageView
         android:id="@+id/postImageContainerView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        tools:src="@mipmap/large" />
+        android:adjustViewBounds="true" />
     <!--    endregion-->
     <!--    region SocialBlock-->
     <TextView
         android:id="@+id/socialLikesView"
         style="@style/news_feed_social_view"
         android:layout_marginStart="16dp"
-        app:drawableLeftCompat="@drawable/ic_social_like_disabled"
-        tools:text="124.3K" />
+        app:drawableLeftCompat="@drawable/ic_social_like_disabled" />
 
     <TextView
         android:id="@+id/socialCommentsView"
         style="@style/news_feed_social_view"
-        app:drawableLeftCompat="@drawable/ic_social_comments"
-        tools:text="100K" />
+        app:drawableLeftCompat="@drawable/ic_social_comments" />
 
     <TextView
         android:id="@+id/socialRepostsView"
         style="@style/news_feed_social_view"
-        app:drawableLeftCompat="@drawable/ic_social_repost_disabled"
-        tools:text="599" />
+        app:drawableLeftCompat="@drawable/ic_social_repost_disabled" />
 
     <TextView
         android:id="@+id/socialViewsCountView"
@@ -83,8 +75,7 @@
         android:layout_marginEnd="16dp"
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
-        app:drawableLeftCompat="@drawable/ic_social_views_count"
-        tools:text="230" />
+        app:drawableLeftCompat="@drawable/ic_social_views_count" />
     <!--    endregion-->
 
 </merge>

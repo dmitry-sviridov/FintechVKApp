@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import ru.sviridov.newsfeed.domain.dto.NewsResponse
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
+import java.util.*
 import kotlin.math.abs
 
 fun fromFile(fileName: String, assetManager: AssetManager): String =
@@ -54,4 +55,8 @@ fun NewsItem.getItemType(): NewsFeedViewType {
         }
     }
     return NewsFeedViewType.UNKNOWN
+}
+
+fun NewsItem.getPostedAtDate(): Date {
+    return Date(postedAt.toLong() * 1000)
 }

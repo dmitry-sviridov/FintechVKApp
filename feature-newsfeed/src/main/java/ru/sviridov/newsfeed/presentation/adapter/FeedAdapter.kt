@@ -1,11 +1,13 @@
 package ru.sviridov.newsfeed.presentation.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
 import ru.sviridov.newsfeed.getItemType
+import ru.sviridov.newsfeed.getPostedAtDate
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType.*
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
@@ -50,6 +52,7 @@ class FeedAdapter(val callback: AdapterCallback) :
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.bind(newsList[position])
+        Log.d("TAG", "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
     }
 
     // Using payload broke the behaviour of swipe-to-like
