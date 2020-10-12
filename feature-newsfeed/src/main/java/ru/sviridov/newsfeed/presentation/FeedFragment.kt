@@ -38,17 +38,13 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        feedAdapter = FeedAdapter(this)
         viewModel.updateNewsFeed()
         setUpRefreshLayout()
         initRecycler()
     }
 
     private fun initRecycler() {
-        /*
-            Denis, I don't know how to get context for providing to
-                ItemTouchHelper in better way (without !!)
-         */
+        feedAdapter = FeedAdapter(this)
         val context = requireContext()
 
         val dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -58,12 +54,13 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
             layoutManager = LinearLayoutManager(this.context)
             adapter = feedAdapter
             addItemDecoration(dividerItemDecoration)
-            itemAnimator?.changeDuration = 50
+            itemAnimator?.changeDuration = ITEM_ANIMATOR_DURATION
         }
 
         viewModel.getNewsItems().observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 feedAdapter.submitList(it) {
+                    refreshLayout.isRefreshing = false
                     feedRecycler.scrollToPosition(0)
                 }
             }
@@ -78,11 +75,14 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
     private fun setUpRefreshLayout() {
         refreshLayout.setOnRefreshListener {
             viewModel.updateNewsFeed()
-            refreshLayout.isRefreshing = false
         }
     }
 
     override fun onItemHided(item: NewsItem) {
         viewModel.markItemAsHidden(item)
+    }
+
+    companion object {
+        const val ITEM_ANIMATOR_DURATION = 50L
     }
 }

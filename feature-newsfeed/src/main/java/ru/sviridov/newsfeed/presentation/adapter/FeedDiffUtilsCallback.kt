@@ -7,11 +7,10 @@ class FeedDiffUtilsCallback() :
     DiffUtil.ItemCallback<NewsItem>() {
 
     override fun areItemsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
-        return oldItem.postedAt == newItem.postedAt && oldItem.sourceTitle == newItem.sourceTitle
+        return oldItem.postId == newItem.postId
     }
 
     override fun areContentsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
         return oldItem == newItem
     }
-
 }

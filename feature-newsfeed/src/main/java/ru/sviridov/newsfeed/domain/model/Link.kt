@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Link(
-    var caption: String?,
-    var description: String?,
-    var photo: Photo?,
-    var title: String?,
+    val caption: String?,
+    val description: String?,
+    val photo: Photo?,
+    val title: String?,
     val url: String
 )

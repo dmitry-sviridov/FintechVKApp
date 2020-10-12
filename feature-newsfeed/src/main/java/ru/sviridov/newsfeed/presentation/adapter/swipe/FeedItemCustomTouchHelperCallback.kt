@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.sviridov.newsfeed.R
@@ -19,12 +21,12 @@ class FeedItemCustomTouchHelperCallback(
     private val likeIcon = AppCompatResources.getDrawable(context, R.drawable.ic_like)!!
 
     private val colorHideDrawableBackground =
-        ColorDrawable(context.resources.getColor(R.color.swipe_to_delete))
+        ColorDrawable(ContextCompat.getColor(context, R.color.swipe_to_delete))
     private val colorLikeDrawableBackground =
-        ColorDrawable(context.resources.getColor(R.color.swipe_to_like))
+        ColorDrawable(ContextCompat.getColor(context, R.color.swipe_to_like))
 
-    lateinit var colorDrawableBackground: ColorDrawable
-    lateinit var icon: Drawable
+    private lateinit var colorDrawableBackground: ColorDrawable
+    private lateinit var icon: Drawable
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -53,7 +55,49 @@ class FeedItemCustomTouchHelperCallback(
     ) {
         val itemView = viewHolder.itemView
 
-        // left swipe case
+        setDrawableColorAndIconPosition(dX, viewHolder, itemView)
+
+        icon.level = 0
+        colorDrawableBackground.draw(c)
+
+        c.save()
+
+        if (dX > 0) {
+            c.clipRect(
+                itemView.left,
+                itemView.top,
+                dX.toInt(),
+                itemView.bottom
+            )
+        } else {
+            c.clipRect(
+                itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
+        }
+
+        icon.draw(c)
+
+        c.restore()
+
+        super.onChildDraw(
+            c,
+            recyclerView,
+            viewHolder,
+            dX,
+            dY,
+            actionState,
+            isCurrentlyActive
+        )
+    }
+
+    private fun setDrawableColorAndIconPosition(
+        dX: Float,
+        viewHolder: RecyclerView.ViewHolder,
+        itemView: View
+    ) {
         if (dX < 0) {
             colorDrawableBackground = colorHideDrawableBackground
             icon = deleteIcon
@@ -90,34 +134,5 @@ class FeedItemCustomTouchHelperCallback(
                 itemView.bottom - iconMarginVertical
             )
         }
-
-        icon.level = 0
-        colorDrawableBackground.draw(c)
-
-        c.save()
-
-        if (dX > 0)
-            c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
-        else
-            c.clipRect(
-                itemView.right + dX.toInt(),
-                itemView.top,
-                itemView.right,
-                itemView.bottom
-            )
-
-        icon.draw(c)
-
-        c.restore()
-
-        super.onChildDraw(
-            c,
-            recyclerView,
-            viewHolder,
-            dX,
-            dY,
-            actionState,
-            isCurrentlyActive
-        )
     }
 }

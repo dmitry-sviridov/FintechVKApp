@@ -1,8 +1,10 @@
 package ru.sviridov.newsfeed.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class Likes(
-    val can_like: Int,
-    val can_publish: Int,
+    @JsonProperty("can_like") val canLike: Int,
+    @JsonProperty("can_publish") val canPublish: Int,
     val count: Int,
-    val user_likes: Int
+    @JsonProperty("user_likes") val userLikes: Int
 )

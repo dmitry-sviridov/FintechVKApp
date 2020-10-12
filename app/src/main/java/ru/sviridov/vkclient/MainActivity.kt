@@ -11,6 +11,9 @@ class MainActivity : AppCompatActivity() {
 
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragmentContainer, FeedFragment()).commit()
+
+        if (savedInstanceState == null) {
+            fragmentTransaction.replace(R.id.fragmentContainer, FeedFragment()).commit()
+        }
     }
 }

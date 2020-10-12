@@ -11,26 +11,28 @@ fun fromFile(fileName: String, assetManager: AssetManager): String =
     assetManager.open(fileName).bufferedReader().use { it.readText() }
 
 
-// TODO: refactor this bullshit after migration to Rx
+// TODO: Denis, don't watch here till we don't have issue about real API calls
 fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
     val newsItems = response.items.asSequence().map {
         NewsItem(
-            it.source_id.toString(),
-            it.date.toString(),
-            "",
-            "",
-            it.text,
-            it.likes?.count ?: 0,
-            it.reposts?.count ?: 0,
-            it.comments?.count ?: 0,
-            it.views?.count ?: 0
+            postId = it.postId,
+            sourceTitle = it.sourceId.toString(),
+            postedAt = it.date.toString(),
+            sourceAvatar = "",
+            imageUrl = "",
+            textContent = it.text,
+            likesCount = it.likes?.count ?: 0,
+            shareCount = it.reposts?.count ?: 0,
+            commentCount = it.comments?.count ?: 0,
+            viewsCount = it.views?.count ?: 0
         )
     }.toMutableList()
 
     newsItems.forEach {
         it.sourceTitle =
             response.groups.first { group -> group.id == abs(it.sourceTitle.toInt()) }.name
-        it.sourceAvatar = response.groups.first { group -> group.name == it.sourceTitle }.photo_50
+        it.sourceAvatar =
+            response.groups.first { group -> group.name == it.sourceTitle }.photoWithSize50
         it.imageUrl = response.items.firstOrNull { item ->
             item.text == it.textContent
         }?.attachments?.firstOrNull { attachment ->
@@ -58,5 +60,12 @@ fun NewsItem.getItemType(): NewsFeedViewType {
 }
 
 fun NewsItem.getPostedAtDate(): Date {
-    return Date(postedAt.toLong() * 1000)
+    var result: Date
+    try {
+        result = Date(postedAt.toLong() * 1000)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        result = Date()
+    }
+    return result
 }

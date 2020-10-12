@@ -1,9 +1,10 @@
 package ru.sviridov.newsfeed.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Comments(
-    val can_post: Int,
+    @JsonProperty("can_post") val canPost: Int,
     val count: Int
 )

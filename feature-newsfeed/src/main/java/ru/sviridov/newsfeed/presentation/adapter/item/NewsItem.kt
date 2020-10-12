@@ -1,6 +1,7 @@
 package ru.sviridov.newsfeed.presentation.adapter.item
 
-data class NewsItem(
+class NewsItem(
+    val postId: Int,
     var sourceTitle: String,
     val postedAt: String,
     var sourceAvatar: String,
@@ -15,25 +16,23 @@ data class NewsItem(
     // Temporary solution: we need to compare two objects without likes count, isLiked and so on
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (javaClass != other?.javaClass) return false
 
         other as NewsItem
 
-        if (this.sourceTitle == other.sourceTitle &&
-            this.postedAt == other.postedAt &&
-            this.imageUrl == other.imageUrl &&
-            this.textContent == other.textContent
-        ) return true
+        if (postId != other.postId) return false
+        if (sourceTitle != other.sourceTitle) return false
+        if (postedAt != other.postedAt) return false
+        if (sourceAvatar != other.sourceAvatar) return false
 
-        return false
+        return true
     }
 
     override fun hashCode(): Int {
-        var result = sourceTitle.hashCode()
+        var result = postId
+        result = 31 * result + sourceTitle.hashCode()
         result = 31 * result + postedAt.hashCode()
         result = 31 * result + sourceAvatar.hashCode()
-        result = 31 * result + (imageUrl?.hashCode() ?: 0)
-        result = 31 * result + (textContent?.hashCode() ?: 0)
         return result
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Attachment(
-    var link: Link?,
-    var photo: PhotoAttachment?,
+    val link: Link?,
+    val photo: PhotoAttachment?,
     val type: String
 )
