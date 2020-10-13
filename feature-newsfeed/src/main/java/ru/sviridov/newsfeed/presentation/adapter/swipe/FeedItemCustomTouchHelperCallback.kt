@@ -55,49 +55,6 @@ class FeedItemCustomTouchHelperCallback(
     ) {
         val itemView = viewHolder.itemView
 
-        setDrawableColorAndIconPosition(dX, viewHolder, itemView)
-
-        icon.level = 0
-        colorDrawableBackground.draw(c)
-
-        c.save()
-
-        if (dX > 0) {
-            c.clipRect(
-                itemView.left,
-                itemView.top,
-                dX.toInt(),
-                itemView.bottom
-            )
-        } else {
-            c.clipRect(
-                itemView.right + dX.toInt(),
-                itemView.top,
-                itemView.right,
-                itemView.bottom
-            )
-        }
-
-        icon.draw(c)
-
-        c.restore()
-
-        super.onChildDraw(
-            c,
-            recyclerView,
-            viewHolder,
-            dX,
-            dY,
-            actionState,
-            isCurrentlyActive
-        )
-    }
-
-    private fun setDrawableColorAndIconPosition(
-        dX: Float,
-        viewHolder: RecyclerView.ViewHolder,
-        itemView: View
-    ) {
         if (dX < 0) {
             colorDrawableBackground = colorHideDrawableBackground
             icon = deleteIcon
@@ -134,5 +91,40 @@ class FeedItemCustomTouchHelperCallback(
                 itemView.bottom - iconMarginVertical
             )
         }
+
+        icon.level = 0
+        colorDrawableBackground.draw(c)
+
+        c.save()
+
+        if (dX > 0) {
+            c.clipRect(
+                itemView.left,
+                itemView.top,
+                dX.toInt(),
+                itemView.bottom
+            )
+        } else {
+            c.clipRect(
+                itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
+        }
+
+        icon.draw(c)
+
+        c.restore()
+
+        super.onChildDraw(
+            c,
+            recyclerView,
+            viewHolder,
+            dX,
+            dY,
+            actionState,
+            isCurrentlyActive
+        )
     }
 }

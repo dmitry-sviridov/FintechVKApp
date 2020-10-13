@@ -6,5 +6,11 @@ import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 interface NewsFeedRepository {
 
     // will be changed later after migrating to Rx
-    fun fetchNews(filter: Any?): NewsResponse
+    fun fetchNews(filter: Any?)
+
+    fun setNewsItemLiked(item: NewsItem)
+
+    fun setNewsItemDisliked(item: NewsItem)
+
+    fun setItemAsHidden(item: NewsItem)
 }

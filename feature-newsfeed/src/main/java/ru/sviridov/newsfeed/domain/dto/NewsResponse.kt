@@ -1,13 +1,14 @@
 package ru.sviridov.newsfeed.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonRootName
 import ru.sviridov.newsfeed.domain.model.Group
 import ru.sviridov.newsfeed.domain.model.NewsFeed
 
 @JsonRootName(value = "response")
 data class NewsResponse(
-    var items: List<NewsFeed> = emptyList(),
-    var profiles: List<Any> = emptyList(),
-    var groups: List<Group> = emptyList(),
-    var next_from: String?
+    val items: List<NewsFeed> = emptyList(),
+    val profiles: List<Any> = emptyList(),
+    val groups: List<Group> = emptyList(),
+    @JsonProperty("next_from") val nextFrom: String?
 )

@@ -12,7 +12,6 @@ import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType.*
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
 
-
 class FeedAdapter(val callback: AdapterCallback) :
     RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
     ItemTouchHelperAdapter {
@@ -21,25 +20,18 @@ class FeedAdapter(val callback: AdapterCallback) :
     var newsList: List<NewsItem>
         set(value) {
             differ.submitList(value)
+            // Denis, without line above recycler didn't update list correctly.
+            // Don't know how to make particle update (notifyItemChanged, etc)
+            notifyDataSetChanged()
         }
         get() = differ.currentList
-
-    fun submitList(data: List<NewsItem>, onSuccess: () -> Unit) {
-        differ.submitList(data, onSuccess)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val view = FeedItemLayout(parent.context)
         return when (viewType) {
-            VIEW_WITH_TEXT_ONLY.value -> TextPostViewHolder(
-                view
-            )
-            VIEW_WITH_SINGLE_PICTURE_ONLY.value -> ImagePostViewHolder(
-                view
-            )
-            VIEW_WITH_SINGLE_PICTURE_AND_TEXT.value -> ImageWithTextPostViewHolder(
-                view
-            )
+            VIEW_WITH_TEXT_ONLY.value -> TextPostViewHolder(view)
+            VIEW_WITH_SINGLE_PICTURE_ONLY.value -> ImagePostViewHolder(view)
+            VIEW_WITH_SINGLE_PICTURE_AND_TEXT.value -> ImageWithTextPostViewHolder(view)
             else -> throw RuntimeException("Unknown view type = $viewType")
         }
     }
@@ -55,23 +47,9 @@ class FeedAdapter(val callback: AdapterCallback) :
         Log.d("TAG", "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
     }
 
-    // Using payload broke the behaviour of swipe-to-like
-    override fun onBindViewHolder(
-        holder: BaseViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (!payloads.isNullOrEmpty()) {
-            if (payloads.first() is Boolean) {
-                holder.bind(newsList[position], payloads.first() as Boolean)
-            }
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
-        }
-    }
-
     interface AdapterCallback {
         fun onItemHided(item: NewsItem)
+        fun onItemLiked(item: NewsItem, shouldBeLiked: Boolean)
     }
 
     abstract inner class BaseViewHolder(view: FeedItemLayout) : RecyclerView.ViewHolder(view) {
@@ -107,17 +85,6 @@ class FeedAdapter(val callback: AdapterCallback) :
                 }
             }
         }
-
-        // Using payload broke the behaviour of swipe-to-like: card don't return back after swipe
-        fun bind(item: NewsItem, becameLiked: Boolean) {
-            (itemView as FeedItemLayout).apply {
-                if (becameLiked) {
-                    this.setLikeButtonEnabled()
-                } else {
-                    this.setLikeButtonDisabled()
-                }
-            }
-        }
     }
 
     // Multiple child classes for demonstration.
@@ -126,25 +93,10 @@ class FeedAdapter(val callback: AdapterCallback) :
     inner class ImagePostViewHolder(view: FeedItemLayout) : BaseViewHolder(view)
 
     override fun onItemDismiss(position: Int) {
-        // Couldn't remove item from original list
         callback.onItemHided(newsList[position])
-        val newList = newsList.toMutableList()
-        newList.removeAt(position)
-        differ.submitList(newList)
     }
 
     override fun onItemApprove(position: Int) {
-        // There will be an api call to notify backend about user likes this item
-        if (newsList[position].isLiked != true) {
-            newsList[position].isLiked = true
-            newsList[position].likesCount++
-        } else {
-            newsList[position].isLiked = false
-            newsList[position].likesCount--
-        }
-
-        notifyItemChanged(position)
-//        Using payload brokes the behaviour of swipe-to-like: card don't return back after swipe
-//        notifyItemChanged(position, listOf(newsList[position].isLiked))
+        callback.onItemLiked(newsList[position], newsList[position].isLiked != true)
     }
 }

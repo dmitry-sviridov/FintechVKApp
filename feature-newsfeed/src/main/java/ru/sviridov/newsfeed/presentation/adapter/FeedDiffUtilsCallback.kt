@@ -11,6 +11,8 @@ class FeedDiffUtilsCallback() :
     }
 
     override fun areContentsTheSame(oldItem: NewsItem, newItem: NewsItem): Boolean {
-        return oldItem == newItem
+        return oldItem.postId == newItem.postId &&
+                oldItem.isLiked == newItem.isLiked &&
+                oldItem.likesCount == newItem.likesCount
     }
 }

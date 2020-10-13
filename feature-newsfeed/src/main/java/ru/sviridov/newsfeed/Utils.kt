@@ -1,6 +1,7 @@
 package ru.sviridov.newsfeed
 
 import android.content.res.AssetManager
+import androidx.lifecycle.MutableLiveData
 import ru.sviridov.newsfeed.domain.dto.NewsResponse
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
@@ -9,7 +10,6 @@ import kotlin.math.abs
 
 fun fromFile(fileName: String, assetManager: AssetManager): String =
     assetManager.open(fileName).bufferedReader().use { it.readText() }
-
 
 // TODO: Denis, don't watch here till we don't have issue about real API calls
 fun mapResponseToItem(response: NewsResponse): List<NewsItem> {
@@ -68,4 +68,8 @@ fun NewsItem.getPostedAtDate(): Date {
         result = Date()
     }
     return result
+}
+
+fun <T> MutableLiveData<T>.notifyObserver() {
+    this.value = this.value
 }

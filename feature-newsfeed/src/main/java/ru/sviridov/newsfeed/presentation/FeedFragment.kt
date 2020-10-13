@@ -57,14 +57,9 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
             itemAnimator?.changeDuration = ITEM_ANIMATOR_DURATION
         }
 
-        viewModel.getNewsItems().observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                feedAdapter.submitList(it) {
-                    refreshLayout.isRefreshing = false
-                    feedRecycler.scrollToPosition(0)
-                }
-            }
-
+        viewModel.newsItems.observe(viewLifecycleOwner, {
+            feedAdapter.newsList = it
+            refreshLayout.isRefreshing = false
         })
 
         val itemTouchHelperCallback = FeedItemCustomTouchHelperCallback(feedAdapter, context)
@@ -80,6 +75,10 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
 
     override fun onItemHided(item: NewsItem) {
         viewModel.markItemAsHidden(item)
+    }
+
+    override fun onItemLiked(item: NewsItem, shouldBeLiked: Boolean) {
+        viewModel.changeItemLikeStatus(item, shouldBeLiked)
     }
 
     companion object {
