@@ -8,11 +8,12 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
 import ru.sviridov.newsfeed.getItemType
 import ru.sviridov.newsfeed.getPostedAtDate
+import ru.sviridov.newsfeed.presentation.AdapterActionHandler
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType.*
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
 
-class FeedAdapter(val callback: AdapterCallback) :
+class FeedAdapter(val actionHandler: AdapterActionHandler) :
     RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
     ItemTouchHelperAdapter {
 
@@ -47,11 +48,6 @@ class FeedAdapter(val callback: AdapterCallback) :
         Log.d("TAG", "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
     }
 
-    interface AdapterCallback {
-        fun onItemHided(item: NewsItem)
-        fun onItemLiked(item: NewsItem, shouldBeLiked: Boolean)
-    }
-
     abstract inner class BaseViewHolder(view: FeedItemLayout) : RecyclerView.ViewHolder(view) {
         // Single method for each view holder
         fun bind(item: NewsItem) {
@@ -78,10 +74,14 @@ class FeedAdapter(val callback: AdapterCallback) :
                     postItemTextView.text = it
                 }
 
-                item.imageUrl?.let {
+                item.imageUrl?.let { url ->
                     Glide.with(context)
-                        .load(it)
+                        .load(url)
                         .into(postImageContainerView)
+
+                    postImageContainerView.setOnClickListener {
+                        actionHandler.onImageViewClicked(url)
+                    }
                 }
             }
         }
@@ -93,10 +93,10 @@ class FeedAdapter(val callback: AdapterCallback) :
     inner class ImagePostViewHolder(view: FeedItemLayout) : BaseViewHolder(view)
 
     override fun onItemDismiss(position: Int) {
-        callback.onItemHided(newsList[position])
+        actionHandler.onItemHided(newsList[position])
     }
 
     override fun onItemApprove(position: Int) {
-        callback.onItemLiked(newsList[position], newsList[position].isLiked != true)
+        actionHandler.onItemLiked(newsList[position], newsList[position].isLiked != true)
     }
 }

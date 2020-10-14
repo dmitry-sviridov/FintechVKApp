@@ -11,22 +11,30 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_feed.*
+import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
+import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
+import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FeedFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
+private const val FEED_TYPE = "feed_type"
+
+class FeedFragment : Fragment(), AdapterActionHandler {
 
     private lateinit var feedAdapter: FeedAdapter
+    private lateinit var feedType: FeedType
 
     private val viewModel by viewModels<FeedViewModel> {
         FeedViewModelFactory(requireActivity().assets)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            feedType = it.get(FEED_TYPE) as FeedType
+        }
     }
 
     override fun onCreateView(
@@ -38,7 +46,7 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.updateNewsFeed()
+        viewModel.updateFeed()
         setUpRefreshLayout()
         initRecycler()
     }
@@ -57,20 +65,43 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
             itemAnimator?.changeDuration = ITEM_ANIMATOR_DURATION
         }
 
-        viewModel.newsItems.observe(viewLifecycleOwner, {
-            feedAdapter.newsList = it
-            refreshLayout.isRefreshing = false
-        })
+        setUpFeedListener()
 
         val itemTouchHelperCallback = FeedItemCustomTouchHelperCallback(feedAdapter, context)
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(feedRecycler)
     }
 
-    private fun setUpRefreshLayout() {
-        refreshLayout.setOnRefreshListener {
-            viewModel.updateNewsFeed()
+    private fun setUpFeedListener() {
+        if (feedType == FeedType.REGULAR_FEED) {
+            viewModel.newsItems.observe(viewLifecycleOwner, {
+                feedAdapter.newsList = it
+                refreshLayout.isRefreshing = false
+            })
+        } else {
+            viewModel.likedItems.observe(viewLifecycleOwner, {
+                feedAdapter.newsList = it.toList()
+            })
         }
+    }
+
+    private fun setUpRefreshLayout() {
+        // setUp refresh layout only for regular feed - favourites uses LiveData for updates
+        if (feedType == FeedType.REGULAR_FEED) {
+            refreshLayout.setOnRefreshListener {
+                viewModel.updateFeed()
+            }
+        } else {
+            refreshLayout.isEnabled = false
+        }
+    }
+
+    override fun onImageViewClicked(url: String) {
+        val fragmentDetails = FeedItemDetailsFragment.newInstance(url)
+        requireActivity().supportFragmentManager.beginTransaction()
+            .add(android.R.id.content, fragmentDetails)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onItemHided(item: NewsItem) {
@@ -83,5 +114,13 @@ class FeedFragment : Fragment(), FeedAdapter.AdapterCallback {
 
     companion object {
         const val ITEM_ANIMATOR_DURATION = 50L
+
+        @JvmStatic
+        fun newInstance(feedType: FeedType) =
+            FeedFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(FEED_TYPE, feedType)
+                }
+            }
     }
 }

@@ -1,12 +1,9 @@
-package ru.sviridov.newsfeed.presentation
+package ru.sviridov.newsfeed.presentation.viewmodel
 
 import android.content.res.AssetManager
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryFakeImpl
-import ru.sviridov.newsfeed.mapResponseToItem
-import ru.sviridov.newsfeed.notifyObserver
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
 class FeedViewModel(assetManager: AssetManager) : ViewModel() {
@@ -15,7 +12,9 @@ class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
     val newsItems = feedRepository.newsItems
 
-    fun updateNewsFeed() {
+    val likedItems = feedRepository.likedItems
+
+    fun updateFeed() {
         feedRepository.fetchNews(null)
     }
 

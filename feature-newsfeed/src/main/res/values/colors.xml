@@ -5,4 +5,6 @@
     <color name="swipe_to_delete">#FFCCBC</color>
     <color name="swipe_to_like">#C8E6C9</color>
     <color name="swipe_to_dislike">#F48FB1</color>
+    <color name="bottom_navigation_background_color">#F8F8F8</color>
+    <color name="details_fragment_background_color">#E43F3D3D</color>
 </resources>

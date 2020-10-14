@@ -72,6 +72,7 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
 
         newsItems.notifyObserver()
         hiddenItems.notifyObserver()
+        likedItems.notifyObserver()
     }
 
     private fun updateLikedList() {
