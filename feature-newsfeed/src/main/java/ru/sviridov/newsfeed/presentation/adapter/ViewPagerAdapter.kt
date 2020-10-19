@@ -24,7 +24,7 @@ class ViewPagerAdapter(
     fun removeOptionalFavouritesFragment() {
         if (fragments.size > 1) {
             this.fragments.removeLast()
-            notifyItemRangeRemoved(0, fragments.size)
+            notifyDataSetChanged()
         }
     }
 

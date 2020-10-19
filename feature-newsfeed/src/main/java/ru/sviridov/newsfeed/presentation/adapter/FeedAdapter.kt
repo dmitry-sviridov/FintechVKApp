@@ -58,13 +58,13 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
                 socialRepostsView.text = item.shareCount.toString()
                 socialCommentsView.text = item.commentCount.toString()
                 socialViewsCountView.text = item.viewsCount.toString()
-                item.isLiked?.let {
-                    if (it) {
+                item.isLiked?.let { isLiked ->
+                    if (isLiked) {
                         this.setLikeButtonEnabled()
                     } else {
                         this.setLikeButtonDisabled()
                     }
-                }
+                } ?: this.setLikeButtonDisabled()
                 Glide.with(context)
                     .load(item.sourceAvatar)
                     .circleCrop()
