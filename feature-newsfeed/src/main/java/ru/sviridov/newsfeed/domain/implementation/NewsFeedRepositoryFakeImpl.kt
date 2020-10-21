@@ -45,8 +45,8 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     override fun setNewsItemLiked(item: NewsItem) {
         val itemToLike =
             dataSource.newsItems.find { newsItem -> newsItem.postId == item.postId }
-        itemToLike?.let { item ->
-            with(item) {
+        itemToLike?.let { newsFeedItem ->
+            with(newsFeedItem) {
                 isLiked = true
                 likesCount++
             }
@@ -57,8 +57,8 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     override fun setNewsItemDisliked(item: NewsItem) {
         val itemToDislike =
             dataSource.newsItems.find { newsItem -> newsItem.postId == item.postId }
-        itemToDislike?.let { item ->
-            with(item) {
+        itemToDislike?.let { newsFeedItem ->
+            with(newsFeedItem) {
                 isLiked = false
                 likesCount--
             }
@@ -72,6 +72,11 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     }
 
     private fun readFromJson(): Callable<NewsResponse> = Callable {
+
+//        if (Random.nextInt(10) > 5) {
+//            throw RuntimeException("Random network error imitation")
+//        }
+
         val jsonString = fromFile("posts.json", assetManager = assetManager)
         val mapper = jacksonObjectMapper()
             .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true)

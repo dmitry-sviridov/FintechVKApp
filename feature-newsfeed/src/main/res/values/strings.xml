@@ -4,4 +4,5 @@
     <string name="no_data">No data</string>
     <string name="menu_item_newsfeed">News</string>
     <string name="menu_item_favourite_news">Favourite</string>
+    <string name="news_list_is_empty">News list is empty :(</string>
 </resources>
