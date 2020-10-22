@@ -81,10 +81,14 @@ class FeedFragment : Fragment(), AdapterActionHandler {
                 feedAdapter.newsList = it.toList()
             })
         }
+        viewModel.isErrorState.observe(viewLifecycleOwner, { errorShouldBeShown ->
+            if (errorShouldBeShown) {
+                (requireActivity() as FeedFragmentHost).showErrorDialog()
+            }
+        })
     }
 
     private fun setUpRefreshLayout() {
-        // setUp refresh layout only for regular feed - favourites uses LiveData for updates
         if (feedType == FeedType.REGULAR_FEED) {
             refreshLayout.setOnRefreshListener {
                 viewModel.updateFeed()
@@ -95,7 +99,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     override fun onImageViewClicked(url: String) {
-        (requireActivity() as DetailsFragmentHost).openDetails(url)
+        (requireActivity() as FeedFragmentHost).openDetails(url)
     }
 
     override fun onItemHided(item: NewsItem) {

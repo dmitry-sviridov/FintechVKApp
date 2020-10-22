@@ -1,5 +1,6 @@
 package ru.sviridov.newsfeed.presentation
 
-interface DetailsFragmentHost {
+interface FeedFragmentHost {
     fun openDetails(url: String)
+    fun showErrorDialog()
 }

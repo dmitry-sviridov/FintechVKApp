@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VkClient</string>
+    <string name="newsfeed_error_dialog_text">There is an error during response handling</string>
+    <string name="newsfeed_error_dialog_title">Error</string>
 </resources>

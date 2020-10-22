@@ -2,12 +2,12 @@ package ru.sviridov.vkclient
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.sviridov.newsfeed.presentation.DetailsFragmentHost
-import ru.sviridov.newsfeed.presentation.FeedFragment
+import ru.sviridov.newsfeed.presentation.AlertDialogBuilder
+import ru.sviridov.newsfeed.presentation.FeedFragmentHost
 import ru.sviridov.newsfeed.presentation.FeedItemDetailsFragment
 import ru.sviridov.newsfeed.presentation.NewsFeedGroupFragment
 
-class MainActivity : AppCompatActivity(), DetailsFragmentHost {
+class MainActivity : AppCompatActivity(), FeedFragmentHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,5 +26,16 @@ class MainActivity : AppCompatActivity(), DetailsFragmentHost {
             .add(android.R.id.content, fragmentDetails)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun showErrorDialog() {
+        AlertDialogBuilder.showDialog(
+            this, getString(R.string.newsfeed_error_dialog_title),
+            msg = getString(R.string.newsfeed_error_dialog_text),
+            positiveBtnText = "Ok",
+            negativeBtnText = null,
+            positiveBtnClickListener = { dialog, _ -> dialog.cancel() },
+            negativeBtnClickListener = null
+        )
     }
 }

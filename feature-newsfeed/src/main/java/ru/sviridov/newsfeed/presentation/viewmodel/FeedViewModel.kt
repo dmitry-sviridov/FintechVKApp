@@ -17,6 +17,7 @@ class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
     val newsItems = MutableLiveData<List<NewsItem>>()
     val likedItems = MutableLiveData<List<NewsItem>>()
+    val isErrorState = MutableLiveData<Boolean>()
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -24,10 +25,13 @@ class FeedViewModel(assetManager: AssetManager) : ViewModel() {
         val newsDisposable = feedRepository.fetchNews(null)
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy { list ->
+            .subscribeBy(onNext = { list ->
                 likedItems.value = list.filter { it.isLiked == true }.toList()
                 newsItems.value = list
-            }
+                isErrorState.value = false
+            }, onError = {
+                isErrorState.value = true
+            })
         compositeDisposable.add(newsDisposable)
     }
 
