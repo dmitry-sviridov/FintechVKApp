@@ -19,8 +19,6 @@ import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelper
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
 
-private const val FEED_TYPE = "feed_type"
-
 class FeedFragment : Fragment(), AdapterActionHandler {
 
     private lateinit var feedAdapter: FeedAdapter
@@ -111,7 +109,8 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     companion object {
         const val ITEM_ANIMATOR_DURATION = 50L
 
-        @JvmStatic
+        private const val FEED_TYPE = "feed_type"
+
         fun newInstance(feedType: FeedType) =
             FeedFragment().apply {
                 arguments = Bundle().apply {
