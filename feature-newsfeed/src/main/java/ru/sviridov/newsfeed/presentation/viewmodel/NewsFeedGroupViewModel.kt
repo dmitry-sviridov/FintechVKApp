@@ -18,7 +18,9 @@ class NewsFeedGroupViewModel : ViewModel() {
     }
 
     private fun listenLikedNewsListNotEmpty() {
-        likedCountDisposable = feedRepository.fetchLikedNewsNotEmpty()
+        likedCountDisposable = feedRepository
+            .fetchLikedNewsNotEmpty()
+            .distinctUntilChanged()
             .subscribeBy { likedListNotEmpty ->
                 favouriteTabEnabled.value = likedListNotEmpty
             }

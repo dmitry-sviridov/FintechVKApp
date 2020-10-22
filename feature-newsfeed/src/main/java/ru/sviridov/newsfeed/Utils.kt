@@ -1,7 +1,6 @@
 package ru.sviridov.newsfeed
 
 import android.content.res.AssetManager
-import androidx.lifecycle.MutableLiveData
 import ru.sviridov.newsfeed.domain.dto.NewsResponse
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
@@ -68,8 +67,4 @@ fun NewsItem.getPostedAtDate(): Date {
         result = Date()
     }
     return result
-}
-
-fun <T> MutableLiveData<T>.notifyObserver() {
-    this.value = this.value
 }

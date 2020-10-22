@@ -13,24 +13,12 @@ import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.ViewPagerAdapter
 import ru.sviridov.newsfeed.presentation.viewmodel.NewsFeedGroupViewModel
 
-const val MENU_ITEM_ID_ONE = 1111
-const val MENU_ITEM_ID_TWO = 2222
-const val MENU_ORDER_FIRST = 0
-const val MENU_ORDER_SECOND = 1
-
-enum class NewsFeedGroupState {
-    REGULAR_ONLY,
-    REGULAR_AND_FAVOURITE
-}
-
 class NewsFeedGroupFragment : Fragment() {
 
     private val viewModel by viewModels<NewsFeedGroupViewModel>()
 
     private lateinit var pagerAdapter: ViewPagerAdapter
     private lateinit var menu: Menu
-
-    private var favouriteTabIsActive = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,19 +38,11 @@ class NewsFeedGroupFragment : Fragment() {
 
         setUpBottomNavListener()
 
-        viewModel.favouriteTabEnabled.observe(viewLifecycleOwner, {
-
-            // Stupid workaround. Without this flag I received updates on every changes in
-            // likedItems count: livedata returns update with same value - don't know how to do
-            // it in the right way
-            if (favouriteTabIsActive != it) {
-                favouriteTabIsActive = it
-
-                if (favouriteTabIsActive) {
-                    setScreenState(NewsFeedGroupState.REGULAR_AND_FAVOURITE)
-                } else {
-                    setScreenState(NewsFeedGroupState.REGULAR_ONLY)
-                }
+        viewModel.favouriteTabEnabled.observe(viewLifecycleOwner, { tabEnabled ->
+            if (tabEnabled) {
+                setScreenState(NewsFeedGroupState.REGULAR_AND_FAVOURITE)
+            } else {
+                setScreenState(NewsFeedGroupState.REGULAR_ONLY)
             }
         })
     }
@@ -113,9 +93,15 @@ class NewsFeedGroupFragment : Fragment() {
                 MENU_ITEM_ID_TWO -> {
                     fragmentViewPager.currentItem = MENU_ORDER_SECOND
                 }
-                else -> throw IllegalStateException("Unknown item id = ${it.itemId}")
             }
             return@setOnNavigationItemSelectedListener true
         }
+    }
+
+    companion object {
+        const val MENU_ITEM_ID_ONE = 1111
+        const val MENU_ITEM_ID_TWO = 2222
+        const val MENU_ORDER_FIRST = 0
+        const val MENU_ORDER_SECOND = 1
     }
 }

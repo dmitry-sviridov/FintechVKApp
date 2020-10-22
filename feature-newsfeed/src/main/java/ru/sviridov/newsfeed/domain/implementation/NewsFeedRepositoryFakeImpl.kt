@@ -22,6 +22,7 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
 
     private val dataSource = FakeDataSource
     private val likedNewsListSubject = BehaviorSubject.create<MutableList<NewsItem>>()
+    private val mapper = jacksonObjectMapper()
 
     override fun fetchNews(filter: Any?): Observable<List<NewsItem>> {
         if (dataSource.newsItems.isEmpty()) {
@@ -72,14 +73,8 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     }
 
     private fun readFromJson(): Callable<NewsResponse> = Callable {
-
-//        if (Random.nextInt(10) > 5) {
-//            throw RuntimeException("Random network error imitation")
-//        }
-
         val jsonString = fromFile("posts.json", assetManager = assetManager)
-        val mapper = jacksonObjectMapper()
-            .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true)
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true)
         return@Callable mapper.readValue<NewsResponse>(jsonString)
     }
 }

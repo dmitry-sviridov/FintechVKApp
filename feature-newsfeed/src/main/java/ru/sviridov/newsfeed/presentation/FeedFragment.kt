@@ -97,11 +97,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     override fun onImageViewClicked(url: String) {
-        val fragmentDetails = FeedItemDetailsFragment.newInstance(url)
-        requireActivity().supportFragmentManager.beginTransaction()
-            .add(android.R.id.content, fragmentDetails)
-            .addToBackStack(null)
-            .commit()
+        (requireActivity() as DetailsFragmentHost).openDetails(url)
     }
 
     override fun onItemHided(item: NewsItem) {

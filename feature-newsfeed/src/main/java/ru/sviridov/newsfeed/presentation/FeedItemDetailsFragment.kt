@@ -11,18 +11,10 @@ import kotlinx.android.synthetic.main.feed_item_layout.view.*
 import kotlinx.android.synthetic.main.fragment_feed_item_details.*
 import ru.sviridov.newsfeed.R
 
-const val IMAGE_URL = "image_url"
 
 class FeedItemDetailsFragment : Fragment() {
 
-    private lateinit var imageURL: String
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            imageURL = it.get(IMAGE_URL) as String
-        }
-    }
+    private val imageURL: String by lazy { requireArguments().get(IMAGE_URL) as String }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +35,8 @@ class FeedItemDetailsFragment : Fragment() {
     }
 
     companion object {
-        @JvmStatic
+        const val IMAGE_URL = "image_url"
+
         fun newInstance(imageURL: String) =
             FeedItemDetailsFragment().apply {
                 arguments = Bundle().apply {

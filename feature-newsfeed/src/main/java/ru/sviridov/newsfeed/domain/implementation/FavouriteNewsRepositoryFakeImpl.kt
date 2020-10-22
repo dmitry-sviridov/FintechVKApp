@@ -8,7 +8,7 @@ internal class FavouriteNewsRepositoryFakeImpl : FavouriteNewsRepository {
 
     private val dataSource = FakeDataSource
 
-    fun fetchLikedNewsNotEmpty(): Observable<Boolean> {
+    override fun fetchLikedNewsNotEmpty(): Observable<Boolean> {
         return dataSource
             .newsListSubject
             .map { list -> list.any { item -> item.isLiked == true } }
