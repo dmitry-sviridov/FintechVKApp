@@ -38,6 +38,7 @@ dependencies {
         "androidx.core:core-ktx:$androidXCoreKtxVersion",
         "androidx.appcompat:appcompat:$androidXAppCompatVersion",
         "com.google.android.material:material:$materialVersion",
-        "androidx.constraintlayout:constraintlayout:$constraintVersion"
+        "androidx.constraintlayout:constraintlayout:$constraintVersion",
+        "com.vk:androidsdk:$vkSdkVersion"
     )
 }
