@@ -21,18 +21,11 @@ import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
 
 class FeedFragment : Fragment(), AdapterActionHandler {
 
-    private lateinit var feedAdapter: FeedAdapter
-    private lateinit var feedType: FeedType
+    private val feedAdapter: FeedAdapter by lazy { FeedAdapter(this) }
+    private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
 
     private val viewModel by viewModels<FeedViewModel> {
         FeedViewModelFactory(requireActivity().assets)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            feedType = it.get(FEED_TYPE) as FeedType
-        }
     }
 
     override fun onCreateView(
@@ -50,7 +43,6 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     private fun initRecycler() {
-        feedAdapter = FeedAdapter(this)
         val context = requireContext()
 
         val dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
