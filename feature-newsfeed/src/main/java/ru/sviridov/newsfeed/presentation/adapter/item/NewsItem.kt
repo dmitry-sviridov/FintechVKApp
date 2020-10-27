@@ -2,6 +2,7 @@ package ru.sviridov.newsfeed.presentation.adapter.item
 
 class NewsItem(
     val postId: Int,
+    val sourceId: Int,
     var sourceTitle: String,
     val postedAt: String,
     var sourceAvatar: String,

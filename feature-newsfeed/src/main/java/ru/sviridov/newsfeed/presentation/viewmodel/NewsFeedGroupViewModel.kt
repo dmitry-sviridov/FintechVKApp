@@ -4,11 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import ru.sviridov.newsfeed.domain.implementation.FavouriteNewsRepositoryFakeImpl
+import ru.sviridov.newsfeed.domain.implementation.FavouriteNewsRepositoryImpl
 
 class NewsFeedGroupViewModel : ViewModel() {
 
-    private val feedRepository = FavouriteNewsRepositoryFakeImpl()
+    private val feedRepository = FavouriteNewsRepositoryImpl()
     val favouriteTabEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
     private lateinit var likedCountDisposable: Disposable

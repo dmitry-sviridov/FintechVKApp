@@ -5,7 +5,9 @@ import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
 interface NewsFeedRepository {
 
-    fun fetchNews(filter: Any?): Observable<List<NewsItem>>
+    fun fetchNews(): Observable<List<NewsItem>>
+
+    fun updateNews(timeDirection: FeedItemsDirection)
 
     fun setNewsItemLiked(item: NewsItem)
 

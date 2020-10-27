@@ -33,6 +33,7 @@ android {
 dependencies {
     implementation(
         project(path: ':feature-newsfeed'),
+        project(path: ':network'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
         "androidx.core:core-ktx:$androidXCoreKtxVersion",

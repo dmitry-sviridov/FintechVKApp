@@ -1,4 +1,4 @@
-package ru.sviridov.newsfeed.domain.implementation
+package ru.sviridov.newsfeed.domain.implementation.stub
 
 import android.content.res.AssetManager
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -9,11 +9,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import ru.sviridov.network.dto.NewsResponse
 import ru.sviridov.newsfeed.data.FakeDataSource
+import ru.sviridov.newsfeed.data.NewsConverterImpl
+import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.domain.NewsFeedRepository
-import ru.sviridov.newsfeed.domain.dto.NewsResponse
 import ru.sviridov.newsfeed.fromFile
-import ru.sviridov.newsfeed.mapResponseToItem
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import java.util.concurrent.Callable
 
@@ -23,14 +24,19 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     private val dataSource = FakeDataSource
     private val likedNewsListSubject = BehaviorSubject.create<MutableList<NewsItem>>()
     private val mapper = jacksonObjectMapper()
+    private val converter = NewsConverterImpl()
 
-    override fun fetchNews(filter: Any?): Observable<List<NewsItem>> {
+    override fun fetchNews(): Observable<List<NewsItem>> {
+        return dataSource.newsListSubject.map { mutable -> mutable.toList() }
+    }
+
+    override fun updateNews(timeDirection: FeedItemsDirection) {
         if (dataSource.newsItems.isEmpty()) {
             run {
                 Single
                     .fromCallable(readFromJson())
                     .subscribeOn(Schedulers.computation())
-                    .map { response -> mapResponseToItem(response) as MutableList<NewsItem> }
+                    .map { response -> converter.convert(response) as MutableList<NewsItem> }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { result ->
                         dataSource.newsItems = result
@@ -40,7 +46,6 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
                     }
             }
         }
-        return dataSource.newsListSubject.map { mutable -> mutable.toList() }
     }
 
     override fun setNewsItemLiked(item: NewsItem) {
@@ -73,7 +78,7 @@ internal class NewsFeedRepositoryFakeImpl(private val assetManager: AssetManager
     }
 
     private fun readFromJson(): Callable<NewsResponse> = Callable {
-        val jsonString = fromFile("posts.json", assetManager = assetManager)
+        val jsonString = fromFile("posts2.json", assetManager = assetManager)
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true)
         return@Callable mapper.readValue<NewsResponse>(jsonString)
     }

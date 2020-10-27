@@ -1,9 +1,9 @@
-package ru.sviridov.newsfeed.domain.model
+package ru.sviridov.network.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class PhotoAttachment(
-    @JsonProperty("access_key") val accessKey: String,
+    @JsonProperty("access_key") val accessKey: String?,
     @JsonProperty("album_id") val albumId: Int,
     val date: Int,
     @JsonProperty("has_tags") val hasTags: Boolean,

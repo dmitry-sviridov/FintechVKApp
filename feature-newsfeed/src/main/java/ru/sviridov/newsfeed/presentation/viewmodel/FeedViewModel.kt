@@ -5,34 +5,38 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryFakeImpl
+import ru.sviridov.newsfeed.domain.FeedItemsDirection
+import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryImpl
 import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
 class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
-    private val feedRepository = NewsFeedRepositoryFakeImpl(assetManager = assetManager)
+    private val feedRepository = NewsFeedRepositoryImpl()
+//    private val feedRepository = NewsFeedRepositoryFakeImpl(assetManager = assetManager)
 
     val newsItems = MutableLiveData<List<NewsItem>>()
     val likedItems = MutableLiveData<List<NewsItem>>()
     val isErrorState = MutableLiveData<Boolean>()
+    val recyclerScrollUp = MutableLiveData<Boolean>()
 
-    private val compositeDisposable = CompositeDisposable()
+    val newsDisposable = feedRepository.fetchNews()
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeBy(onNext = { list ->
+            likedItems.value = list.filter { it.isLiked == true }.toList()
+            newsItems.value = list
+            isErrorState.value = false
+        }, onError = {
+            isErrorState.value = true
+        })
 
-    fun updateFeed() {
-        val newsDisposable = feedRepository.fetchNews(null)
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = { list ->
-                likedItems.value = list.filter { it.isLiked == true }.toList()
-                newsItems.value = list
-                isErrorState.value = false
-            }, onError = {
-                isErrorState.value = true
-            })
-        compositeDisposable.add(newsDisposable)
+    fun uploadFeedItems(direction: FeedItemsDirection) {
+        feedRepository.updateNews(direction)
+        if (direction == FeedItemsDirection.FRESH) {
+            recyclerScrollUp.value = true
+        }
     }
 
     fun markItemAsHidden(item: NewsItem) {
@@ -49,7 +53,7 @@ class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.clear()
+        newsDisposable.dispose()
     }
 }
 

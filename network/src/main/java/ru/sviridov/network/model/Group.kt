@@ -1,4 +1,4 @@
-package ru.sviridov.newsfeed.domain.model
+package ru.sviridov.network.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty

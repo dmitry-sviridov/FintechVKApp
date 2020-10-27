@@ -4,8 +4,7 @@ import io.reactivex.Observable
 import ru.sviridov.newsfeed.data.FakeDataSource
 import ru.sviridov.newsfeed.domain.FavouriteNewsRepository
 
-internal class FavouriteNewsRepositoryFakeImpl : FavouriteNewsRepository {
-
+class FavouriteNewsRepositoryImpl : FavouriteNewsRepository {
     private val dataSource = FakeDataSource
 
     override fun fetchLikedNewsNotEmpty(): Observable<Boolean> {

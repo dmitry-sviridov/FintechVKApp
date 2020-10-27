@@ -32,7 +32,9 @@ android {
 }
 
 dependencies {
-    implementation (
+    implementation(
+        project(path: ':network'),
+
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
 
         "androidx.core:core-ktx:$androidXCoreKtxVersion",

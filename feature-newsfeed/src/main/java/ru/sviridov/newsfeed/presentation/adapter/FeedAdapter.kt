@@ -33,7 +33,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
             VIEW_WITH_TEXT_ONLY.value -> TextPostViewHolder(view)
             VIEW_WITH_SINGLE_PICTURE_ONLY.value -> ImagePostViewHolder(view)
             VIEW_WITH_SINGLE_PICTURE_AND_TEXT.value -> ImageWithTextPostViewHolder(view)
-            else -> throw RuntimeException("Unknown view type = $viewType")
+            else -> TextPostViewHolder(view)
         }
     }
 

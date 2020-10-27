@@ -9,6 +9,7 @@ import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
 import com.vk.api.sdk.auth.VKScope
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.sviridov.network.auth.TokenHolder
 import ru.sviridov.newsfeed.presentation.AlertDialogBuilder
 import ru.sviridov.newsfeed.presentation.FeedFragmentHost
 import ru.sviridov.newsfeed.presentation.FeedItemDetailsFragment
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val callback = object : VKAuthCallback {
             override fun onLogin(token: VKAccessToken) {
+                TokenHolder.token = token
                 Snackbar
                     .make(fragmentContainer, "onLogin", Snackbar.LENGTH_LONG).show()
                 showNewsGroupFragment()

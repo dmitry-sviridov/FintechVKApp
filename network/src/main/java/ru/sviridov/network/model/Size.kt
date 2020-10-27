@@ -1,4 +1,4 @@
-package ru.sviridov.newsfeed.domain.model
+package ru.sviridov.network.model
 
 data class Size(
     val height: Int,
