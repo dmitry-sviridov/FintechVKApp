@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.getItemType
 import ru.sviridov.newsfeed.getPostedAtDate
 import ru.sviridov.newsfeed.presentation.AdapterActionHandler
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType.*
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.layout.FeedItemLayout
 
 class FeedAdapter(val actionHandler: AdapterActionHandler) :
@@ -53,7 +53,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
         fun bind(item: NewsItem) {
             (itemView as FeedItemLayout).apply {
                 postWriterTitleTextView.text = item.sourceTitle
-                postCreatedAgoTextView.text = item.postedAt
+                postCreatedAgoTextView.text = item.postedAt.toString()
                 socialLikesView.text = item.likesCount.toString()
                 socialRepostsView.text = item.shareCount.toString()
                 socialCommentsView.text = item.commentCount.toString()

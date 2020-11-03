@@ -2,13 +2,13 @@ package ru.sviridov.vkclient
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
 import com.vk.api.sdk.auth.VKScope
-import kotlinx.android.synthetic.main.activity_main.*
 import ru.sviridov.network.auth.TokenHolder
 import ru.sviridov.newsfeed.presentation.AlertDialogBuilder
 import ru.sviridov.newsfeed.presentation.FeedFragmentHost
@@ -31,9 +31,8 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
         val callback = object : VKAuthCallback {
             override fun onLogin(token: VKAccessToken) {
                 TokenHolder.token = token
-                Snackbar
-                    .make(fragmentContainer, "onLogin", Snackbar.LENGTH_LONG).show()
                 showNewsGroupFragment()
+                Log.d("VKAUTH/LOGIN", "onLogin: success")
             }
 
             override fun onLoginFailed(errorCode: Int) {

@@ -1,7 +1,7 @@
 package ru.sviridov.newsfeed.data
 
 import io.reactivex.subjects.BehaviorSubject
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 
 object FakeDataSource {
     var newsItems = mutableListOf<NewsItem>()

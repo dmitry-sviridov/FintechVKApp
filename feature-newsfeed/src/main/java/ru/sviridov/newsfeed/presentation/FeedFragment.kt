@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
@@ -28,7 +28,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
 
     private val viewModel by viewModels<FeedViewModel> {
-        FeedViewModelFactory(requireActivity().assets)
+        FeedViewModelFactory(requireActivity().application)
     }
 
     override fun onCreateView(

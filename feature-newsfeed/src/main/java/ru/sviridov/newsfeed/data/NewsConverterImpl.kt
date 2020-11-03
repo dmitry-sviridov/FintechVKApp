@@ -1,8 +1,8 @@
 package ru.sviridov.newsfeed.data
 
 import ru.sviridov.network.dto.NewsResponse
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.domain.NewsConverter
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import kotlin.math.abs
 
 class NewsConverterImpl : NewsConverter {
@@ -12,7 +12,7 @@ class NewsConverterImpl : NewsConverter {
                 postId = it.postId,
                 sourceId = it.sourceId,
                 sourceTitle = it.sourceId.toString(),
-                postedAt = it.date.toString(),
+                postedAt = it.date,
                 sourceAvatar = "",
                 imageUrl = "",
                 textContent = it.text,

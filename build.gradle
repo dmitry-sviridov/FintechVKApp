@@ -56,4 +56,8 @@ ext {
 
     //Retrofit
     retrofitVersion = "2.9.0"
+
+    // Room
+    roomVersion = "2.2.5"
+
 }

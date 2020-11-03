@@ -1,20 +1,20 @@
 package ru.sviridov.newsfeed.presentation.viewmodel
 
-import android.content.res.AssetManager
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryImpl
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 
-class FeedViewModel(assetManager: AssetManager) : ViewModel() {
+class FeedViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val feedRepository = NewsFeedRepositoryImpl()
-//    private val feedRepository = NewsFeedRepositoryFakeImpl(assetManager = assetManager)
+    private val feedRepository = NewsFeedRepositoryImpl(application)
 
     val newsItems = MutableLiveData<List<NewsItem>>()
     val likedItems = MutableLiveData<List<NewsItem>>()
@@ -53,11 +53,12 @@ class FeedViewModel(assetManager: AssetManager) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        feedRepository.onCleared()
         newsDisposable.dispose()
     }
 }
 
-class FeedViewModelFactory(private val assetManager: AssetManager) :
+class FeedViewModelFactory(private val application: Application) :
     ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = FeedViewModel(assetManager) as T
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T = FeedViewModel(application) as T
 }

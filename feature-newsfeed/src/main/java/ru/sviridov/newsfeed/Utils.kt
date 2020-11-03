@@ -1,8 +1,8 @@
 package ru.sviridov.newsfeed
 
 import android.content.res.AssetManager
+import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
-import ru.sviridov.newsfeed.presentation.adapter.item.NewsItem
 import java.util.*
 
 fun fromFile(fileName: String, assetManager: AssetManager): String =
