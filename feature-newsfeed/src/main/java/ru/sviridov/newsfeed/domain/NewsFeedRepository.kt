@@ -1,7 +1,7 @@
 package ru.sviridov.newsfeed.domain
 
 import io.reactivex.Observable
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 
 interface NewsFeedRepository {
 

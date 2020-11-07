@@ -8,12 +8,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.network.ApiServicesProvider
 import ru.sviridov.network.dto.NewsResponse
 import ru.sviridov.newsfeed.data.FakeDataSource
 import ru.sviridov.newsfeed.data.NewsConverterImpl
 import ru.sviridov.newsfeed.data.db.NewsDatabase
-import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.domain.NewsFeedRepository
 
@@ -30,12 +30,16 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
     init {
         compositeDisposable.add(
             likedDao.getAllLiked()
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    dataSource.newsItems.addAll(it)
-                }, onError = {
-                    Log.d("ROOm/RX", "init: error catched. ${it.message}")
+                .subscribeOn(Schedulers.io())
+                .toObservable()
+                .flatMap { likedList -> Observable.fromIterable(likedList) }
+                .map { entity -> converter.convertDbToUi(entity) }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { list ->
+                    dataSource.newsListSubject.onNext(list)
+                }, onError = { error ->
+                    Log.d("RX", "init: error = ${error.message}")
                 })
         )
     }
@@ -43,8 +47,8 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
     override fun updateNews(timeDirection: FeedItemsDirection) {
         var response: Single<NewsResponse>? = null
         if (timeDirection == FeedItemsDirection.PREVIOUS) {
-            if (dataSource.nextFrom != null) {
-                response = apiService.getNews(dataSource.nextFrom!!)
+            dataSource.nextFrom?.let { nextFrom ->
+                response = apiService.getNews(nextFrom)
             }
         } else {
             response = apiService.getNews()
@@ -53,7 +57,7 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
         response?.let {
             it.subscribeOn(Schedulers.io())
                 .doOnSuccess { dataSource.nextFrom = it.nextFrom }
-                .map { resp -> converter.convert(resp) }
+                .map { resp -> converter.convertApiResponseToUi(resp) }
                 .doAfterSuccess { list ->
                     list
                         .filter { item -> item.isLiked == true }
@@ -64,77 +68,81 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
                     Log.d("RX", "fetch: ${it.message}")
                 }, onSuccess = { responseItems ->
                     if (timeDirection == FeedItemsDirection.PREVIOUS) {
-                        dataSource.newsItems.addAll(responseItems)
+                        dataSource.newsListSubject.value?.let { existingList ->
+                            val newList = existingList.toMutableList()
+                            newList.addAll(responseItems)
+                            dataSource.newsListSubject.onNext(newList)
+                        } ?: dataSource.newsListSubject.onNext(responseItems)
                     } else {
-                        (responseItems as MutableList<NewsItem>).addAll(dataSource.newsItems)
-                        dataSource.newsItems = responseItems.distinct().toMutableList()
+                        dataSource.newsListSubject.value?.let { existingList ->
+                            responseItems.toMutableList().addAll(existingList)
+                        }
+                        dataSource.newsListSubject.onNext(responseItems.distinct())
                     }
-                    dataSource.newsListSubject.onNext(dataSource.newsItems.distinct() as MutableList<NewsItem>)
                 })
         }
     }
 
     override fun fetchNews(): Observable<List<NewsItem>> {
-        return dataSource.newsListSubject.map { mutable -> mutable.toList() }
+        return dataSource.newsListSubject
     }
 
     override fun setNewsItemLiked(item: NewsItem) {
         val likedDisposable = likesService.setItemAsLiked(item.sourceId, item.postId)
             .subscribeOn(Schedulers.io())
-            .doFinally { insertItemToDB(item) }
+            .doFinally {
+                item.isLiked = true
+                item.likesCount ++
+                insertItemToDB(item)
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                Log.d("RX", "setNewsItemDisliked: ${it.likes}")
+                dataSource.newsListSubject.value?.let { list ->
+                    val newList = list.toMutableList()
+                    dataSource.newsListSubject.onNext(newList)
+                }
             }, onError = {
                 Log.d("RX", "setNewsItemDisliked: ${it.message}")
             })
 
         compositeDisposable.add(likedDisposable)
-
-        val itemToLike =
-            dataSource.newsItems.find { newsItem -> newsItem.postId == item.postId }
-        itemToLike?.let { newsFeedItem ->
-            with(newsFeedItem) {
-                isLiked = true
-                likesCount++
-            }
-            dataSource.newsListSubject.onNext(dataSource.newsItems)
-        }
     }
 
     override fun setNewsItemDisliked(item: NewsItem) {
         val dislikedDisposable = likesService.setItemAsDisliked(item.sourceId, item.postId)
             .subscribeOn(Schedulers.io())
-            .doFinally { removeItemFromDb(item) }
+            .doFinally {
+                removeItemFromDb(item)
+                item.isLiked = false
+                item.likesCount --
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                Log.d("RX", "setNewsItemDisliked: ${it.likes}")
+                Log.d("RX", "setNewsItemDisliked ${it.likes}")
+                dataSource.newsListSubject.value?.let { list ->
+                    val newList = list.toMutableList()
+                    dataSource.newsListSubject.onNext(newList)
+                }
             }, onError = {
                 Log.d("RX", "setNewsItemDisliked: ${it.message}")
             })
 
         compositeDisposable.add(dislikedDisposable)
-
-        val itemToDislike =
-            dataSource.newsItems.find { newsItem -> newsItem.postId == item.postId }
-        itemToDislike?.let { newsFeedItem ->
-            with(newsFeedItem) {
-                isLiked = false
-                likesCount--
-            }
-            dataSource.newsListSubject.onNext(dataSource.newsItems)
-        }
     }
 
     override fun setItemAsHidden(item: NewsItem) {
-        dataSource.newsItems.remove(item)
-        dataSource.newsListSubject.onNext(dataSource.newsItems)
+        //TODO: Api call to hide element from feed
+        dataSource.newsListSubject.value?.let { list ->
+            val newList = list.toMutableList()
+            newList.remove(newList.find { newsItem -> newsItem.postId == item.postId })
+            dataSource.newsListSubject.onNext(newList)
+        }
     }
 
-    fun insertItemToDB(item: NewsItem) {
+    private fun insertItemToDB(item: NewsItem) {
         compositeDisposable.add(
             likedDao
-                .insertNewsItem(item)
+                .insertNewsItem(converter.convertUiToDb(item))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = {
@@ -151,10 +159,10 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
         )
     }
 
-    fun removeItemFromDb(item: NewsItem) {
+    private fun removeItemFromDb(item: NewsItem) {
         compositeDisposable.add(
             likedDao
-                .deleteNewsItem(item)
+                .deleteNewsItem(converter.convertUiToDb(item))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = {
