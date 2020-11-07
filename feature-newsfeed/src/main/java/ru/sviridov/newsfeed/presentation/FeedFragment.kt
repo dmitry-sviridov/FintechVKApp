@@ -1,7 +1,6 @@
 package ru.sviridov.newsfeed.presentation
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +12,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_feed.*
+import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
-import ru.sviridov.newsfeed.data.db.item.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
@@ -42,10 +41,13 @@ class FeedFragment : Fragment(), AdapterActionHandler {
         super.onViewCreated(view, savedInstanceState)
         refreshLayout.isEnabled = false
         if (feedType == FeedType.REGULAR_FEED) {
-            viewModel.uploadFeedItems(FeedItemsDirection.FRESH)
             setUpRefreshLayout()
+            viewModel.handleAction(FeedViewActions.GetFreshNews)
         }
         initRecycler()
+        viewModel.viewState.observe(viewLifecycleOwner, { viewState ->
+            render(viewState)
+        })
     }
 
     private fun initRecycler() {
@@ -63,8 +65,6 @@ class FeedFragment : Fragment(), AdapterActionHandler {
             itemAnimator?.changeDuration = ITEM_ANIMATOR_DURATION
         }
 
-        setUpFeedListener()
-
         val itemTouchHelperCallback = FeedItemCustomTouchHelperCallback(feedAdapter, context)
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(feedRecycler)
@@ -76,49 +76,28 @@ class FeedFragment : Fragment(), AdapterActionHandler {
                     if (linearLayoutManager
                             .findLastVisibleItemPosition() == feedAdapter.itemCount - 1
                     ) {
-                        viewModel.uploadFeedItems(FeedItemsDirection.PREVIOUS)
-                        refreshLayout.isRefreshing = true
+                        viewModel.handleAction(FeedViewActions.GetPreviousNews)
                     }
                 }
             }
         })
     }
 
-    private fun setUpFeedListener() {
-        if (feedType == FeedType.REGULAR_FEED) {
-            viewModel.newsItems.observe(viewLifecycleOwner, {
-                feedAdapter.newsList = it
-                refreshLayout.isRefreshing = false
-            })
-
-            viewModel.isErrorState.observe(viewLifecycleOwner, { errorShouldBeShown ->
-                if (errorShouldBeShown) {
-                    (requireActivity() as FeedFragmentHost).showErrorDialog()
-                    refreshLayout.isRefreshing = false
-                }
-            })
-            viewModel.recyclerScrollUp.observe(viewLifecycleOwner, { recyclerShouldBeScrolled ->
-                if (recyclerShouldBeScrolled) {
-                    Handler().postDelayed({
-                        try {
-                            feedRecycler.scrollToPosition(0)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }, 500)
-                }
-            })
-        } else {
-            viewModel.likedItems.observe(viewLifecycleOwner, {
-                feedAdapter.newsList = it.toList()
-            })
+    private fun render(state: FeedViewState) {
+        when (state) {
+            FeedViewState.Loading -> renderLoadingState()
+            is FeedViewState.ShowApiError -> renderError(state.apiError)
+            is FeedViewState.ShowNewsFeed -> renderUpdatedFeed(
+                state.newsList,
+                state.scrollRecyclerUp
+            )
         }
     }
 
     private fun setUpRefreshLayout() {
         refreshLayout.isEnabled = true
         refreshLayout.setOnRefreshListener {
-            viewModel.uploadFeedItems(FeedItemsDirection.FRESH)
+            viewModel.handleAction(FeedViewActions.GetFreshNews)
         }
     }
 
@@ -127,11 +106,39 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     override fun onItemHided(item: NewsItem) {
-        viewModel.markItemAsHidden(item)
+        viewModel.handleAction(FeedViewActions.HideCurrentItem(item))
     }
 
     override fun onItemLiked(item: NewsItem, shouldBeLiked: Boolean) {
-        viewModel.changeItemLikeStatus(item, shouldBeLiked)
+        if (shouldBeLiked) {
+            viewModel.handleAction(FeedViewActions.SetCurrentItemAsLiked(item))
+        } else {
+            viewModel.handleAction(FeedViewActions.SetCurrentItemAsDisliked(item))
+        }
+    }
+
+    private fun renderLoadingState() {
+        refreshLayout.isRefreshing = true
+    }
+
+    private fun renderError(apiError: Throwable) {
+        // TODO
+        (requireActivity() as FeedFragmentHost).showErrorDialog()
+        refreshLayout.isRefreshing = false
+    }
+
+    private fun renderUpdatedFeed(newList: List<NewsItem>, scrollRecyclerUp: Boolean) {
+        feedAdapter.newsList = newList
+        refreshLayout.isRefreshing = false
+        if (scrollRecyclerUp) {
+            feedRecycler.handler.postDelayed({
+                try {
+                    feedRecycler.scrollToPosition(0)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }, 500)
+        }
     }
 
     companion object {

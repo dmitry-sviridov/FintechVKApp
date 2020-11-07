@@ -1,7 +1,7 @@
 package ru.sviridov.newsfeed.presentation.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 
 class FeedDiffUtilsCallback() :
     DiffUtil.ItemCallback<NewsItem>() {

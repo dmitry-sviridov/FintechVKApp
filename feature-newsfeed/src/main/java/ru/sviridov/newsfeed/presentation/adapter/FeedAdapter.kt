@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.getItemType
 import ru.sviridov.newsfeed.getPostedAtDate
 import ru.sviridov.newsfeed.presentation.AdapterActionHandler

@@ -1,6 +1,6 @@
 package ru.sviridov.newsfeed.presentation
 
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 
 interface AdapterActionHandler: OnAdapterClickListener, AdapterCallback
 
