@@ -1,12 +1,13 @@
 package ru.sviridov.newsfeed.data
 
+import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.network.dto.NewsResponse
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.newsfeed.data.db.entity.NewsItemEntity
 import ru.sviridov.newsfeed.domain.NewsConverter
 import kotlin.math.abs
 
 class NewsConverterImpl : NewsConverter {
-    override fun convert(dto: NewsResponse): List<NewsItem> {
+    override fun convertApiResponseToUi(dto: NewsResponse): List<NewsItem> {
         val newsItems = dto.items.asSequence().map {
             NewsItem(
                 postId = it.postId,
@@ -49,4 +50,34 @@ class NewsConverterImpl : NewsConverter {
         }
         return newsItems
     }
+
+    override fun convertDbToUi(entity: NewsItemEntity) = NewsItem(
+            postId = entity.postId,
+            sourceId = entity.sourceId,
+            sourceTitle = entity.sourceTitle,
+            sourceAvatar = entity.sourceAvatar,
+            postedAt = entity.postedAt,
+            imageUrl = entity.imageUrl,
+            textContent = entity.textContent,
+            likesCount = entity.likesCount,
+            shareCount = entity.shareCount,
+            commentCount = entity.commentCount,
+            viewsCount = entity.viewsCount,
+            isLiked = entity.isLiked
+        )
+
+    override fun convertUiToDb(item: NewsItem) = NewsItemEntity(
+        postId = item.postId,
+        sourceId = item.sourceId,
+        sourceTitle = item.sourceTitle,
+        sourceAvatar = item.sourceAvatar,
+        postedAt = item.postedAt,
+        imageUrl = item.imageUrl,
+        textContent = item.textContent,
+        likesCount = item.likesCount,
+        shareCount = item.shareCount,
+        commentCount = item.commentCount,
+        viewsCount = item.viewsCount,
+        isLiked = item.isLiked
+    )
 }

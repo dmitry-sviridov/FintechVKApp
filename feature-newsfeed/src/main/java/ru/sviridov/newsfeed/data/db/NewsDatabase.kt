@@ -5,9 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.sviridov.newsfeed.data.db.dao.LikedNewsItemDao
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.newsfeed.data.db.entity.NewsItemEntity
 
-@Database(entities = [NewsItem::class], version = 1)
+@Database(entities = [NewsItemEntity::class], version = 1)
 abstract class NewsDatabase : RoomDatabase() {
     abstract fun likedDao(): LikedNewsItemDao
 

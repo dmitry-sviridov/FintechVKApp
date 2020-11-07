@@ -1,11 +1,9 @@
 package ru.sviridov.newsfeed.data
 
 import io.reactivex.subjects.BehaviorSubject
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 
 object FakeDataSource {
-    var newsItems = mutableListOf<NewsItem>()
-    val newsListSubject = BehaviorSubject.create<MutableList<NewsItem>>()
-
+    val newsListSubject = BehaviorSubject.create<List<NewsItem>>()
     var nextFrom: String? = null
 }

@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation(
         project(path: ':network'),
+        project(path: ':component-feeditem-model'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
 

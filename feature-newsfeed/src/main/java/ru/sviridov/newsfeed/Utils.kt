@@ -1,7 +1,7 @@
 package ru.sviridov.newsfeed
 
 import android.content.res.AssetManager
-import ru.sviridov.newsfeed.data.db.item.NewsItem
+import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.presentation.adapter.NewsFeedViewType
 import java.util.*
 

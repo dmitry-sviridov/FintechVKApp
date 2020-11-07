@@ -1,3 +1,4 @@
+include ':component-feeditem-model'
 include ':network'
 include ':feature-newsfeed'
 include ':app'
