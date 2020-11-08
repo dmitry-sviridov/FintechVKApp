@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
-import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
@@ -40,14 +39,18 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         refreshLayout.isEnabled = false
-        if (feedType == FeedType.REGULAR_FEED) {
-            setUpRefreshLayout()
-            viewModel.handleAction(FeedViewActions.GetFreshNews)
-        }
-        initRecycler()
+
         viewModel.viewState.observe(viewLifecycleOwner, { viewState ->
             render(viewState)
         })
+
+        if (feedType == FeedType.REGULAR_FEED) {
+            setUpRefreshLayout()
+            viewModel.handleAction(FeedViewActions.GetFreshNews)
+        } else {
+            viewModel.handleAction(FeedViewActions.GetLikedNews)
+        }
+        initRecycler()
     }
 
     private fun initRecycler() {
@@ -72,7 +75,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
         feedRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!refreshLayout.isRefreshing) {
+                if (!refreshLayout.isRefreshing && feedType == FeedType.REGULAR_FEED) {
                     if (linearLayoutManager
                             .findLastVisibleItemPosition() == feedAdapter.itemCount - 1
                     ) {
@@ -122,8 +125,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     private fun renderError(apiError: Throwable) {
-        // TODO
-        (requireActivity() as FeedFragmentHost).showErrorDialog()
+        (requireActivity() as FeedFragmentHost).showErrorDialog(apiError.message)
         refreshLayout.isRefreshing = false
     }
 

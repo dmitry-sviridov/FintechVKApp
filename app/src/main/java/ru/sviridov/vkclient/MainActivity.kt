@@ -63,10 +63,10 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
             .commit()
     }
 
-    override fun showErrorDialog() {
+    override fun showErrorDialog(message: String?) {
         AlertDialogBuilder.showDialog(
             this, getString(R.string.newsfeed_error_dialog_title),
-            msg = getString(R.string.newsfeed_error_dialog_text),
+            msg = message ?: getString(R.string.newsfeed_error_dialog_text),
             positiveBtnText = "Ok",
             negativeBtnText = null,
             positiveBtnClickListener = { dialog, _ -> dialog.cancel() },

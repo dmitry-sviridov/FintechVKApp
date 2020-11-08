@@ -12,10 +12,13 @@ import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
 import ru.sviridov.newsfeed.presentation.adapter.ViewPagerAdapter
 import ru.sviridov.newsfeed.presentation.viewmodel.NewsFeedGroupViewModel
+import ru.sviridov.newsfeed.presentation.viewmodel.NewsFeedGroupViewModelFactory
 
 class NewsFeedGroupFragment : Fragment() {
 
-    private val viewModel by viewModels<NewsFeedGroupViewModel>()
+    private val viewModel by viewModels<NewsFeedGroupViewModel> {
+        NewsFeedGroupViewModelFactory(requireActivity().application)
+    }
 
     private lateinit var pagerAdapter: ViewPagerAdapter
     private lateinit var menu: Menu

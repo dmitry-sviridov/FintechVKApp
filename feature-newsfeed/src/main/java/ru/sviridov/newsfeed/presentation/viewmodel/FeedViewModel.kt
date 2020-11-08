@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
@@ -18,37 +19,71 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
 
     private val feedRepository = NewsFeedRepositoryImpl(application)
     private var shouldRecyclerBeScrolled = false
+    private val compositeDisposable = CompositeDisposable()
+
+    // Возможно, костыльный флаг (!)
+    private var isRequestIsFirst = true
+
+    // Костыльный флаг. Возможно, стоит прокидывать тип фрагмента в конструктор вьюмодели.
+    private var repositoryShouldBeCleared = true
 
     val viewState: MutableLiveData<FeedViewState> = MutableLiveData()
-
-    private val newsDisposable = feedRepository.fetchNews()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeBy(onNext = { list ->
-            viewState.value = FeedViewState.ShowNewsFeed(
-                newsList = list,
-                scrollRecyclerUp = shouldRecyclerBeScrolled
-            )
-            Log.d(TAG, "newsDisposable :onNext, firstElement = ${list.first().postId}")
-
-        }, onError = { throwable ->
-            viewState.value = FeedViewState.ShowApiError(throwable)
-            Log.d(TAG, "newsDisposable :onError => ${throwable.message} ")
-        })
 
     fun handleAction(action: FeedViewActions) {
         Log.d(TAG, "handleAction: $action")
         when (action) {
             FeedViewActions.GetFreshNews -> fetchNewsUpdates(FeedItemsDirection.FRESH)
             FeedViewActions.GetPreviousNews -> fetchNewsUpdates(FeedItemsDirection.PREVIOUS)
+            FeedViewActions.GetLikedNews -> startObservingLikedNewsFromDBToUIState()
             is FeedViewActions.SetCurrentItemAsLiked -> changeItemLikeStatus(action.item, true)
             is FeedViewActions.SetCurrentItemAsDisliked -> changeItemLikeStatus(action.item, false)
             is FeedViewActions.HideCurrentItem -> markItemAsHidden(action.item)
         }
     }
 
-    fun fetchNewsUpdates(direction: FeedItemsDirection) {
+    private fun startObservingCurrentSessionDataSourceToUIState() {
+        val newsDisposable = feedRepository.fetchNews()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = { list ->
+                viewState.value = FeedViewState.ShowNewsFeed(
+                    newsList = list,
+                    scrollRecyclerUp = shouldRecyclerBeScrolled
+                )
+                Log.d(TAG, "newsDisposable :onNext, firstElement = ${list.first().postId}")
+
+            }, onError = { throwable ->
+                viewState.value = FeedViewState.ShowApiError(throwable)
+                Log.d(TAG, "newsDisposable :onError => ${throwable.message} ")
+            })
+        compositeDisposable.add(newsDisposable)
+    }
+
+    private fun startObservingLikedNewsFromDBToUIState() {
+        repositoryShouldBeCleared =
+            false // Для предотвращения очистки репозитория в случае Favourites
+
+        val likedNewsDisposable = feedRepository
+            .fetchLikedFromDB()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = { list ->
+                viewState.value = FeedViewState.ShowNewsFeed(
+                    newsList = list,
+                    scrollRecyclerUp = false
+                )
+                Log.d(TAG, "likesDisposable :onNext, firstElement = ${list.first().postId}")
+            }, onError = { throwable ->
+                Log.d(TAG, "likesDisposable :onError => ${throwable.message} ")
+            })
+        compositeDisposable.add(likedNewsDisposable)
+    }
+
+    private fun fetchNewsUpdates(direction: FeedItemsDirection) {
         Log.d(TAG, "fetchNewsUpdates: $direction")
         viewState.value = FeedViewState.Loading
+        if (isRequestIsFirst) {
+            startObservingCurrentSessionDataSourceToUIState()
+            isRequestIsFirst = false // Для предотвращения создания лишних подписок
+        }
         shouldRecyclerBeScrolled = direction == FeedItemsDirection.FRESH
         feedRepository.updateNews(direction)
     }
@@ -72,8 +107,10 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     override fun onCleared() {
         Log.d(TAG, "onCleared")
         super.onCleared()
-        feedRepository.onCleared()
-        newsDisposable.dispose()
+        compositeDisposable.dispose()
+        if (repositoryShouldBeCleared) {
+            feedRepository.onCleared()
+        }
     }
 
     companion object {
