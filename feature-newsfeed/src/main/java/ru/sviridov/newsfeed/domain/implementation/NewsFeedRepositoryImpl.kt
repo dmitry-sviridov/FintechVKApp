@@ -11,7 +11,9 @@ import io.reactivex.schedulers.Schedulers
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.network.ApiServicesProvider
 import ru.sviridov.network.dto.NewsResponse
-import ru.sviridov.newsfeed.data.FakeDataSource
+import ru.sviridov.newsfeed.data.LocalDataSource
+import ru.sviridov.newsfeed.data.LocalDataSource.insertNewsItemsToSubjectAfter
+import ru.sviridov.newsfeed.data.LocalDataSource.insertNewsItemsToSubjectBefore
 import ru.sviridov.newsfeed.data.NewsConverterImpl
 import ru.sviridov.newsfeed.data.db.NewsDatabase
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
@@ -19,7 +21,7 @@ import ru.sviridov.newsfeed.domain.NewsFeedRepository
 
 internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
 
-    private val dataSource = FakeDataSource
+    private val dataSource = LocalDataSource
     private val apiService = ApiServicesProvider.getNewsFeedApiService()
     private val likesService = ApiServicesProvider.getPostLikesApiService()
     private val converter = NewsConverterImpl()
@@ -45,43 +47,37 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
     }
 
     override fun updateNews(timeDirection: FeedItemsDirection) {
-        var response: Single<NewsResponse>? = null
-        if (timeDirection == FeedItemsDirection.PREVIOUS) {
-            dataSource.nextFrom?.let { nextFrom ->
-                response = apiService.getNews(nextFrom)
-            }
+
+        val newsRequest: Single<NewsResponse> = if (timeDirection == FeedItemsDirection.PREVIOUS &&
+            dataSource.nextFrom != null
+        ) {
+            apiService.getNews(dataSource.nextFrom!!)
         } else {
-            response = apiService.getNews()
+            apiService.getNews()
         }
 
-        response?.let {
-            it.subscribeOn(Schedulers.io())
-                .doOnSuccess { dataSource.nextFrom = it.nextFrom }
-                .map { resp -> converter.convertApiResponseToUi(resp) }
-                .doAfterSuccess { list ->
-                    list
-                        .filter { item -> item.isLiked == true }
-                        .forEach { item -> insertItemToDB(item) }
+        val responseDisposable = newsRequest.subscribeOn(Schedulers.io())
+            .doOnSuccess { dataSource.nextFrom = it.nextFrom }
+            .map { resp -> converter.convertApiResponseToUi(resp) }
+            .doAfterSuccess { list ->
+                list
+                    .filter { item -> item.isLiked == true }
+                    .forEach { item -> insertItemToDB(item) }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onError = {
+                Log.d("RX", "fetch: ${it.message}")
+            }, onSuccess = { responseItems ->
+                if (timeDirection == FeedItemsDirection.PREVIOUS) {
+                    insertNewsItemsToSubjectBefore(responseItems)
+                } else {
+                    insertNewsItemsToSubjectAfter(responseItems)
                 }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onError = {
-                    Log.d("RX", "fetch: ${it.message}")
-                }, onSuccess = { responseItems ->
-                    if (timeDirection == FeedItemsDirection.PREVIOUS) {
-                        dataSource.newsListSubject.value?.let { existingList ->
-                            val newList = existingList.toMutableList()
-                            newList.addAll(responseItems)
-                            dataSource.newsListSubject.onNext(newList)
-                        } ?: dataSource.newsListSubject.onNext(responseItems)
-                    } else {
-                        dataSource.newsListSubject.value?.let { existingList ->
-                            responseItems.toMutableList().addAll(existingList)
-                        }
-                        dataSource.newsListSubject.onNext(responseItems.distinct())
-                    }
-                })
-        }
+            })
+
+        compositeDisposable.add(responseDisposable)
     }
+
 
     override fun fetchNews(): Observable<List<NewsItem>> {
         return dataSource.newsListSubject
@@ -92,7 +88,7 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
             .subscribeOn(Schedulers.io())
             .doFinally {
                 item.isLiked = true
-                item.likesCount ++
+                item.likesCount++
                 insertItemToDB(item)
             }
             .observeOn(AndroidSchedulers.mainThread())
@@ -114,7 +110,7 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
             .doFinally {
                 removeItemFromDb(item)
                 item.isLiked = false
-                item.likesCount --
+                item.likesCount--
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
