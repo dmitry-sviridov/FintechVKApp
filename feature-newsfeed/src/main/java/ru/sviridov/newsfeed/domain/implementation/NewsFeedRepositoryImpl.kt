@@ -64,7 +64,7 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
             .subscribeOn(Schedulers.io())
     }
 
-    fun fetchLikedFromDB(): Observable<List<NewsItem>> {
+    override fun fetchLikedFromDB(): Observable<List<NewsItem>> {
         return likedDao
             .getAllLiked()
             .subscribeOn(Schedulers.io())
