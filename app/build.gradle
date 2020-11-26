@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -41,6 +42,9 @@ dependencies {
         "com.google.android.material:material:$materialVersion",
         "androidx.constraintlayout:constraintlayout:$constraintVersion",
         "com.vk:androidsdk:$vkSdkVersion",
+        // Dagger
+        "com.google.dagger:dagger:$dagger2Version"
     )
-    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+    kapt "com.google.dagger:dagger-compiler:$dagger2Version"
+    kapt "androidx.room:room-compiler:$roomVersion"
 }

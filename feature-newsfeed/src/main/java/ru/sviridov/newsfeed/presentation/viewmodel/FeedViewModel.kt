@@ -1,8 +1,6 @@
 package ru.sviridov.newsfeed.presentation.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,13 +9,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
-import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryImpl
+import ru.sviridov.newsfeed.domain.NewsFeedRepository
 import ru.sviridov.newsfeed.presentation.FeedViewActions
 import ru.sviridov.newsfeed.presentation.FeedViewState
+import javax.inject.Inject
 
-class FeedViewModel(application: Application) : AndroidViewModel(application) {
+class FeedViewModel(private val feedRepository: NewsFeedRepository) :
+    ViewModel() {
 
-    private val feedRepository = NewsFeedRepositoryImpl(application)
     private var shouldRecyclerBeScrolled = false
     private val compositeDisposable = CompositeDisposable()
 
@@ -118,7 +117,20 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
     }
 }
 
-class FeedViewModelFactory(private val application: Application) :
-    ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = FeedViewModel(application) as T
+class FeedViewModelFactory @Inject constructor(
+    private val feedRepository: NewsFeedRepository
+) {
+    private val providers = mapOf(
+        FeedViewModel::class.java to { FeedViewModel(feedRepository) }
+    )
+
+    fun create(): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                val viewModel = providers[modelClass]?.invoke()
+                    ?: throw IllegalArgumentException("Can't find ViewModel of specified class $modelClass")
+                return viewModel as T
+            }
+        }
+    }
 }

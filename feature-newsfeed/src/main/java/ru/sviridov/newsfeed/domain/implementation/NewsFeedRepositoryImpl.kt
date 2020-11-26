@@ -1,6 +1,5 @@
 package ru.sviridov.newsfeed.domain.implementation
 
-import android.app.Application
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -11,21 +10,30 @@ import io.reactivex.schedulers.Schedulers
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.network.ApiServicesProvider
 import ru.sviridov.network.dto.NewsResponse
+import ru.sviridov.network.service.NewsFeedService
 import ru.sviridov.newsfeed.data.CurrentSessionDataSource
 import ru.sviridov.newsfeed.data.NewsConverterImpl
-import ru.sviridov.newsfeed.data.db.NewsDatabase
+import ru.sviridov.newsfeed.data.db.dao.LikedNewsItemDao
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
 import ru.sviridov.newsfeed.domain.NewsFeedRepository
 
-internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
+internal class NewsFeedRepositoryImpl(
+    private val apiService: NewsFeedService
+)
+//    private val likesService: PostLikesService,
+//    private val converter: NewsConverter,
+//    private val likedDao: LikedNewsItemDao
+    : NewsFeedRepository {
 
     private val dataSource = CurrentSessionDataSource
-    private val apiService = ApiServicesProvider.getNewsFeedApiService()
+
+    //    private val apiService = ApiServicesProvider.getNewsFeedApiService()
     private val likesService = ApiServicesProvider.getPostLikesApiService()
     private val converter = NewsConverterImpl()
-    private val likedDao = NewsDatabase.getDatabase(application).likedDao()
+    private lateinit var likedDao: LikedNewsItemDao
 
     private val compositeDisposable = CompositeDisposable()
+
 
     override fun updateNews(timeDirection: FeedItemsDirection) {
         val newsRequest: Single<NewsResponse> = if (timeDirection == FeedItemsDirection.PREVIOUS &&
@@ -164,7 +172,7 @@ internal class NewsFeedRepositoryImpl(application: Application) : NewsFeedReposi
         )
     }
 
-    fun onCleared() {
+    override fun onCleared() {
         compositeDisposable.clear()
     }
 }

@@ -1,12 +1,13 @@
 package ru.sviridov.newsfeed.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,20 +16,27 @@ import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
+import ru.sviridov.newsfeed.di.NewsFeedInjector
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
+import javax.inject.Inject
 
 class FeedFragment : Fragment(), AdapterActionHandler {
 
     private val feedAdapter: FeedAdapter by lazy { FeedAdapter(this) }
     private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
 
-    private val viewModel by viewModels<FeedViewModel> {
-        FeedViewModelFactory(requireActivity().application)
+    @Inject
+    internal lateinit var factory: FeedViewModelFactory
+
+    private val viewModelProvider by lazy { ViewModelProvider(this, factory.create()) }
+    private val feedViewModel: FeedViewModel by lazy {
+        viewModelProvider.get(FeedViewModel::class.java)
     }
 
+    //    private lateinit var feedViewModel: FeedViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,19 +44,25 @@ class FeedFragment : Fragment(), AdapterActionHandler {
         return inflater.inflate(R.layout.fragment_feed, container, false)
     }
 
+    override fun onAttach(context: Context) {
+        NewsFeedInjector.getComponent().inject(this)
+
+        super.onAttach(context)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         refreshLayout.isEnabled = false
 
-        viewModel.viewState.observe(viewLifecycleOwner, { viewState ->
+        feedViewModel.viewState.observe(viewLifecycleOwner, { viewState ->
             render(viewState)
         })
 
         if (feedType == FeedType.REGULAR_FEED) {
             setUpRefreshLayout()
-            viewModel.handleAction(FeedViewActions.GetFreshNews)
+            feedViewModel.handleAction(FeedViewActions.GetFreshNews)
         } else {
-            viewModel.handleAction(FeedViewActions.GetLikedNews)
+            feedViewModel.handleAction(FeedViewActions.GetLikedNews)
         }
         initRecycler()
     }
@@ -79,7 +93,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
                     if (linearLayoutManager
                             .findLastVisibleItemPosition() == feedAdapter.itemCount - 1
                     ) {
-                        viewModel.handleAction(FeedViewActions.GetPreviousNews)
+                        feedViewModel.handleAction(FeedViewActions.GetPreviousNews)
                     }
                 }
             }
@@ -100,7 +114,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     private fun setUpRefreshLayout() {
         refreshLayout.isEnabled = true
         refreshLayout.setOnRefreshListener {
-            viewModel.handleAction(FeedViewActions.GetFreshNews)
+            feedViewModel.handleAction(FeedViewActions.GetFreshNews)
         }
     }
 
@@ -109,14 +123,14 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     override fun onItemHided(item: NewsItem) {
-        viewModel.handleAction(FeedViewActions.HideCurrentItem(item))
+        feedViewModel.handleAction(FeedViewActions.HideCurrentItem(item))
     }
 
     override fun onItemLiked(item: NewsItem, shouldBeLiked: Boolean) {
         if (shouldBeLiked) {
-            viewModel.handleAction(FeedViewActions.SetCurrentItemAsLiked(item))
+            feedViewModel.handleAction(FeedViewActions.SetCurrentItemAsLiked(item))
         } else {
-            viewModel.handleAction(FeedViewActions.SetCurrentItemAsDisliked(item))
+            feedViewModel.handleAction(FeedViewActions.SetCurrentItemAsDisliked(item))
         }
     }
 

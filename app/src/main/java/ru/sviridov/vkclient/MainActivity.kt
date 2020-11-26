@@ -17,7 +17,6 @@ import ru.sviridov.newsfeed.presentation.NewsFeedGroupFragment
 
 class MainActivity : AppCompatActivity(), FeedFragmentHost {
 
-    // Denis, don't know how to handle savedInstantState != null outside onCreate method
     private var savedStateIsExists = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,5 +71,9 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
             positiveBtnClickListener = { dialog, _ -> dialog.cancel() },
             negativeBtnClickListener = null
         )
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }

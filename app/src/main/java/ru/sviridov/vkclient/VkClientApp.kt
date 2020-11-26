@@ -4,12 +4,20 @@ import android.app.Application
 import android.widget.Toast
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKTokenExpiredHandler
+import ru.sviridov.vkclient.di.AppInjector
 
 class VkClientApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        initDi()
+
         VK.addTokenExpiredHandler(tokenTracker)
+    }
+
+    private fun initDi() {
+        AppInjector.createAppComponent(this)
     }
 
     private val tokenTracker = object : VKTokenExpiredHandler {

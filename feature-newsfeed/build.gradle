@@ -36,6 +36,7 @@ dependencies {
     implementation(
         project(path: ':network'),
         project(path: ':component-feeditem-model'),
+//        project(path: ':core'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
 
@@ -65,8 +66,14 @@ dependencies {
         //Room
         "androidx.room:room-runtime:$roomVersion",
         "androidx.room:room-ktx:$roomVersion",
-        "androidx.room:room-rxjava2:$roomVersion"
+        "androidx.room:room-rxjava2:$roomVersion",
+
+        // Dagger
+        "com.google.dagger:dagger:$dagger2Version"
     )
+
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.10"
+    kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 }
