@@ -3,7 +3,6 @@ package ru.sviridov.newsfeed.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -14,16 +13,13 @@ import ru.sviridov.newsfeed.presentation.FeedViewActions
 import ru.sviridov.newsfeed.presentation.FeedViewState
 import javax.inject.Inject
 
-class FeedViewModel(private val feedRepository: NewsFeedRepository) :
+class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepository) :
     ViewModel() {
 
     private var shouldRecyclerBeScrolled = false
     private val compositeDisposable = CompositeDisposable()
 
-    // Возможно, костыльный флаг (!)
     private var isRequestIsFirst = true
-
-    // Костыльный флаг. Возможно, стоит прокидывать тип фрагмента в конструктор вьюмодели.
     private var repositoryShouldBeCleared = true
 
     val viewState: MutableLiveData<FeedViewState> = MutableLiveData()
@@ -114,23 +110,5 @@ class FeedViewModel(private val feedRepository: NewsFeedRepository) :
 
     companion object {
         private val TAG = FeedViewModel::class.simpleName
-    }
-}
-
-class FeedViewModelFactory @Inject constructor(
-    private val feedRepository: NewsFeedRepository
-) {
-    private val providers = mapOf(
-        FeedViewModel::class.java to { FeedViewModel(feedRepository) }
-    )
-
-    fun create(): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                val viewModel = providers[modelClass]?.invoke()
-                    ?: throw IllegalArgumentException("Can't find ViewModel of specified class $modelClass")
-                return viewModel as T
-            }
-        }
     }
 }

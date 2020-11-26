@@ -2,43 +2,35 @@ package ru.sviridov.newsfeed.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.component.feeditem.model.NewsItem
+import ru.sviridov.core.extension.viewModels
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
-import ru.sviridov.newsfeed.data.db.dao.LikedNewsItemDao
 import ru.sviridov.newsfeed.di.NewsFeedInjector
 import ru.sviridov.newsfeed.presentation.adapter.FeedAdapter
 import ru.sviridov.newsfeed.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModel
-import ru.sviridov.newsfeed.presentation.viewmodel.FeedViewModelFactory
 import javax.inject.Inject
+import javax.inject.Provider
 
 class FeedFragment : Fragment(), AdapterActionHandler {
 
     private val feedAdapter: FeedAdapter by lazy { FeedAdapter(this) }
     private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
 
-
     @Inject
-    internal lateinit var factory: FeedViewModelFactory
-    private val viewModelProvider by lazy { ViewModelProvider(this, factory.create()) }
-    private val feedViewModel: FeedViewModel by lazy {
-        viewModelProvider.get(FeedViewModel::class.java)
-    }
-
-
+    internal lateinit var vmProvider: Provider<FeedViewModel>
+    private val feedViewModel: FeedViewModel by viewModels { vmProvider.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -45,10 +45,3 @@ abstract class NewsFeedRepositoryModule {
     @Singleton
     internal abstract fun newsFeedRepository(impl: NewsFeedRepositoryImpl): NewsFeedRepository
 }
-
-/*
-    private val apiService: NewsFeedService,
-    private val likesService: PostLikesService,
-    private val converter: NewsConverter,
-    private val likedDao: LikedNewsItemDao
- */

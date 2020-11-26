@@ -1,24 +1,27 @@
 package ru.sviridov.newsfeed.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import kotlinx.android.synthetic.main.fragment_news_feed_group.*
+import ru.sviridov.core.extension.viewModels
 import ru.sviridov.newsfeed.FeedType
 import ru.sviridov.newsfeed.R
+import ru.sviridov.newsfeed.di.NewsFeedInjector
 import ru.sviridov.newsfeed.presentation.adapter.ViewPagerAdapter
 import ru.sviridov.newsfeed.presentation.viewmodel.NewsFeedGroupViewModel
-import ru.sviridov.newsfeed.presentation.viewmodel.NewsFeedGroupViewModelFactory
+import javax.inject.Inject
+import javax.inject.Provider
 
 class NewsFeedGroupFragment : Fragment() {
 
-    private val viewModel by viewModels<NewsFeedGroupViewModel> {
-        NewsFeedGroupViewModelFactory(requireActivity().application)
-    }
+    @Inject
+    internal lateinit var vmProvider: Provider<NewsFeedGroupViewModel>
+    private val viewModel: NewsFeedGroupViewModel by viewModels { vmProvider.get() }
 
     private lateinit var pagerAdapter: ViewPagerAdapter
     private lateinit var menu: Menu
@@ -48,6 +51,11 @@ class NewsFeedGroupFragment : Fragment() {
                 setScreenState(NewsFeedGroupState.REGULAR_ONLY)
             }
         })
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        NewsFeedInjector.getComponent().inject(this)
     }
 
     private fun setUpInitialMenuState() {

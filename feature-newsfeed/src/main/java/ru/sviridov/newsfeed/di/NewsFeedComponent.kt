@@ -6,6 +6,7 @@ import dagger.Component
 import ru.sviridov.network.service.NewsFeedService
 import ru.sviridov.network.service.PostLikesService
 import ru.sviridov.newsfeed.presentation.FeedFragment
+import ru.sviridov.newsfeed.presentation.NewsFeedGroupFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 interface NewsFeedComponent {
 
     fun inject(target: FeedFragment)
+    fun inject(target: NewsFeedGroupFragment)
 
     @Component.Factory
     interface Factory {
