@@ -8,30 +8,24 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.sviridov.component.feeditem.model.NewsItem
-import ru.sviridov.network.ApiServicesProvider
 import ru.sviridov.network.dto.NewsResponse
 import ru.sviridov.network.service.NewsFeedService
+import ru.sviridov.network.service.PostLikesService
 import ru.sviridov.newsfeed.data.CurrentSessionDataSource
-import ru.sviridov.newsfeed.data.NewsConverterImpl
 import ru.sviridov.newsfeed.data.db.dao.LikedNewsItemDao
 import ru.sviridov.newsfeed.domain.FeedItemsDirection
+import ru.sviridov.newsfeed.domain.NewsConverter
 import ru.sviridov.newsfeed.domain.NewsFeedRepository
+import javax.inject.Inject
 
-internal class NewsFeedRepositoryImpl(
-    private val apiService: NewsFeedService
-)
-//    private val likesService: PostLikesService,
-//    private val converter: NewsConverter,
-//    private val likedDao: LikedNewsItemDao
-    : NewsFeedRepository {
+internal class NewsFeedRepositoryImpl @Inject constructor(
+    private val apiService: NewsFeedService,
+    private val likesService: PostLikesService,
+    private val converter: NewsConverter,
+    private val likedDao: LikedNewsItemDao
+) : NewsFeedRepository {
 
     private val dataSource = CurrentSessionDataSource
-
-    //    private val apiService = ApiServicesProvider.getNewsFeedApiService()
-    private val likesService = ApiServicesProvider.getPostLikesApiService()
-    private val converter = NewsConverterImpl()
-    private lateinit var likedDao: LikedNewsItemDao
-
     private val compositeDisposable = CompositeDisposable()
 
 

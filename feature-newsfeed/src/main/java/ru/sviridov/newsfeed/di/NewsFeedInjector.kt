@@ -13,9 +13,9 @@ object NewsFeedInjector {
         return newsFeedComponent ?: DaggerNewsFeedComponent
             .factory()
             .create(
-                context = context,
-                newsFeedService = networkComponent.getNewsFeedService(),
-                likesService = networkComponent.getPostLikesService()
+                context,
+                networkComponent.getNewsFeedService(),
+                networkComponent.getPostLikesService()
             )
             .also {
                 newsFeedComponent = it

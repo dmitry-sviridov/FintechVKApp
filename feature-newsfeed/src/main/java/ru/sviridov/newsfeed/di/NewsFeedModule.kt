@@ -1,10 +1,15 @@
 package ru.sviridov.newsfeed.di
 
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import ru.sviridov.newsfeed.data.NewsConverterImpl
 import ru.sviridov.newsfeed.data.db.NewsDatabase
 import ru.sviridov.newsfeed.data.db.dao.LikedNewsItemDao
+import ru.sviridov.newsfeed.domain.NewsConverter
+import ru.sviridov.newsfeed.domain.NewsFeedRepository
+import ru.sviridov.newsfeed.domain.implementation.NewsFeedRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -23,31 +28,23 @@ class NewsFeedDbModule {
     }
 }
 
-//@Module
-//class NewsConverterModule {
-//
-//    @Provides
-//    @Singleton
-//    fun provideNewsConverter(): NewsConverter {
-//        return NewsConverterImpl()
-//    }
-//}
+@Module
+class NewsConverterModule {
 
-//@Module
-//class NewsFeedRepositoryModule {
-//
-//    @Provides
-//    @Singleton
-//    fun newsFeedRepository(
-////        apiService: NewsFeedService,
-////        likesService: PostLikesService,
-////        converter: NewsConverter,
-////        likedDao: LikedNewsItemDao
-//    ): NewsFeedRepository {
-//        return NewsFeedRepositoryImpl()
-//        //apiService, likesService, converter, likedDao
-//    }
-//}
+    @Provides
+    @Singleton
+    fun provideNewsConverter(): NewsConverter {
+        return NewsConverterImpl()
+    }
+}
+
+@Module
+abstract class NewsFeedRepositoryModule {
+
+    @Binds
+    @Singleton
+    internal abstract fun newsFeedRepository(impl: NewsFeedRepositoryImpl): NewsFeedRepository
+}
 
 /*
     private val apiService: NewsFeedService,

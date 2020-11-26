@@ -12,17 +12,13 @@ import javax.inject.Singleton
 @Component(
     modules = [
         NewsFeedDbModule::class,
-//        NewsConverterModule::class,
-//        NewsFeedRepositoryModule::class
+        NewsConverterModule::class,
+        NewsFeedRepositoryModule::class
     ]
 )
 interface NewsFeedComponent {
 
     fun inject(target: FeedFragment)
-
-    fun getLikedService(): PostLikesService
-
-    fun getApiService(): NewsFeedService
 
     @Component.Factory
     interface Factory {

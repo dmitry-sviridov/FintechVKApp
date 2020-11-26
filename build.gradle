@@ -61,6 +61,6 @@ ext {
     roomVersion = "2.2.5"
 
     // Dagger 2
-    dagger2Version = "2.30"
+    dagger2Version = "2.29"
 
 }
