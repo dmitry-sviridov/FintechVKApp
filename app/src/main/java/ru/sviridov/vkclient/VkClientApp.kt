@@ -4,7 +4,7 @@ import android.app.Application
 import android.widget.Toast
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKTokenExpiredHandler
-import ru.sviridov.vkclient.di.AppInjector
+import ru.sviridov.vkclient.network.di.AppInjector
 
 class VkClientApp : Application() {
 

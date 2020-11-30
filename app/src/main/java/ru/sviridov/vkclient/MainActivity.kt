@@ -9,11 +9,11 @@ import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
 import com.vk.api.sdk.auth.VKScope
-import ru.sviridov.network.auth.TokenHolder
-import ru.sviridov.newsfeed.presentation.AlertDialogBuilder
-import ru.sviridov.newsfeed.presentation.FeedFragmentHost
-import ru.sviridov.newsfeed.presentation.FeedItemDetailsFragment
-import ru.sviridov.newsfeed.presentation.NewsFeedGroupFragment
+import ru.sviridov.vkclient.network.auth.TokenHolder
+import ru.sviridov.vkclient.ui.presentation.AlertDialogBuilder
+import ru.sviridov.vkclient.ui.presentation.fragments.FeedFragmentHost
+import ru.sviridov.vkclient.ui.presentation.fragments.FeedItemDetailsFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.NewsFeedGroupFragment
 
 class MainActivity : AppCompatActivity(), FeedFragmentHost {
 
@@ -23,7 +23,9 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         savedStateIsExists = savedInstanceState != null
-        VK.login(this, arrayListOf(VKScope.WALL, VKScope.FRIENDS, VKScope.GROUPS))
+        if (!savedStateIsExists) {
+            VK.login(this, arrayListOf(VKScope.WALL, VKScope.FRIENDS, VKScope.GROUPS))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

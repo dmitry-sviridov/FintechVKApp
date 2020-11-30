@@ -1,6 +1,7 @@
+include ':feature-newsfeed'
 include ':core'
 include ':component-feeditem-model'
 include ':network'
-include ':feature-newsfeed'
+include ':ui'
 include ':app'
 rootProject.name = "VkClient"
