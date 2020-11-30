@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_feed_item_details.*
 import ru.sviridov.vkclient.ui.R
-import ru.sviridov.vkclient.ui.di.NewsFeedInjector
+import ru.sviridov.vkclient.ui.di.UiComponentInjector
 import java.io.File
 import java.io.OutputStream
 import java.text.SimpleDateFormat
@@ -60,7 +60,7 @@ class FeedItemDetailsFragment : Fragment() {
 
         val filesDir = applicationContext.filesDir
         val imagePath = File(filesDir, ".")
-        val authority = NewsFeedInjector.appId
+        val authority = UiComponentInjector.appId
         val newFile = File(imagePath, fileName)
         val uri = FileProvider.getUriForFile(applicationContext, authority, newFile)
 

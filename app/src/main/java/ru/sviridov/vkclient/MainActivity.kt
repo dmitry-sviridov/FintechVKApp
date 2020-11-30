@@ -1,15 +1,9 @@
 package ru.sviridov.vkclient
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
-import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAccessToken
-import com.vk.api.sdk.auth.VKAuthCallback
-import com.vk.api.sdk.auth.VKScope
-import ru.sviridov.vkclient.network.auth.TokenHolder
 import ru.sviridov.vkclient.ui.presentation.AlertDialogBuilder
 import ru.sviridov.vkclient.ui.presentation.fragments.FeedFragmentHost
 import ru.sviridov.vkclient.ui.presentation.fragments.FeedItemDetailsFragment
@@ -22,38 +16,15 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        savedStateIsExists = savedInstanceState != null
-        if (!savedStateIsExists) {
-            VK.login(this, arrayListOf(VKScope.WALL, VKScope.FRIENDS, VKScope.GROUPS))
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val callback = object : VKAuthCallback {
-            override fun onLogin(token: VKAccessToken) {
-                TokenHolder.token = token
-                showNewsGroupFragment()
-                Log.d("VKAUTH/LOGIN", "onLogin: success")
-            }
-
-            override fun onLoginFailed(errorCode: Int) {
-                Snackbar
-                    .make(findViewById(R.id.content), "onLoginFailed", Snackbar.LENGTH_LONG)
-                    .show()
-            }
-        }
-        if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
+        showNewsGroupFragment()
     }
 
     private fun showNewsGroupFragment() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
-        if (!savedStateIsExists) {
-            fragmentTransaction.replace(R.id.fragmentContainer, NewsFeedGroupFragment()).commit()
-        }
+        fragmentTransaction.replace(R.id.fragmentContainer, NewsFeedGroupFragment()).commit()
+
     }
 
     override fun openDetails(url: String) {
@@ -77,5 +48,10 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
 
     companion object {
         private const val TAG = "MainActivity"
+
+        fun startFrom(context: Context) {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }

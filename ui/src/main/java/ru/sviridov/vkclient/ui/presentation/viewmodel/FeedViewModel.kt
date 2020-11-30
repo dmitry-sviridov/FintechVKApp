@@ -7,8 +7,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import ru.sviridov.component.feeditem.model.NewsItem
-import ru.sviridov.vkclient.ui.domain.FeedItemsDirection
-import ru.sviridov.vkclient.ui.domain.NewsFeedRepository
+import ru.sviridov.vkclient.feature_newsfeed.FeedItemsDirection
+import ru.sviridov.vkclient.feature_newsfeed.domain.NewsFeedRepository
 import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewActions
 import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewState
 import javax.inject.Inject

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_news_feed_group.*
 import ru.sviridov.core.extension.viewModels
 import ru.sviridov.vkclient.ui.R
-import ru.sviridov.vkclient.ui.di.NewsFeedInjector
+import ru.sviridov.vkclient.ui.di.UiComponentInjector
 import ru.sviridov.vkclient.ui.presentation.adapter.ViewPagerAdapter
 import ru.sviridov.vkclient.ui.presentation.enums.FeedType
 import ru.sviridov.vkclient.ui.presentation.enums.NewsFeedGroupState
@@ -56,7 +56,7 @@ class NewsFeedGroupFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        NewsFeedInjector.getComponent().inject(this)
+        UiComponentInjector.getComponent().inject(this)
     }
 
     private fun setUpInitialMenuState() {

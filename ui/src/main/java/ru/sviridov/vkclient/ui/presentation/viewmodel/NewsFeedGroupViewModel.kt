@@ -4,11 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import ru.sviridov.vkclient.ui.domain.implementation.FavouriteNewsRepositoryImpl
+import ru.sviridov.vkclient.feature_newsfeed.domain.FavouriteNewsRepository
 import javax.inject.Inject
 
 class NewsFeedGroupViewModel @Inject constructor(
-    private val favouriteNewsRepository: FavouriteNewsRepositoryImpl
+    private val favouriteNewsRepository: FavouriteNewsRepository
 ) : ViewModel() {
 
     val favouriteTabEnabled: MutableLiveData<Boolean> = MutableLiveData()

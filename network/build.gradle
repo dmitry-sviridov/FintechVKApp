@@ -34,6 +34,8 @@ android {
 dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     implementation (
+            project(path: ':feature-auth'),
+
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
             "androidx.core:core-ktx:$androidXCoreKtxVersion",
 

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.fragment_feed.*
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.core.extension.viewModels
 import ru.sviridov.vkclient.ui.R
-import ru.sviridov.vkclient.ui.di.NewsFeedInjector
+import ru.sviridov.vkclient.ui.di.UiComponentInjector
 import ru.sviridov.vkclient.ui.presentation.adapter.AdapterActionHandler
 import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapter
 import ru.sviridov.vkclient.ui.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
@@ -37,7 +37,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        NewsFeedInjector.getComponent().inject(this)
+        UiComponentInjector.getComponent().inject(this)
     }
 
     override fun onCreateView(
@@ -143,7 +143,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     private fun renderUpdatedFeed(newList: List<NewsItem>, scrollRecyclerUp: Boolean) {
         feedAdapter.newsList = newList
         refreshLayout.isRefreshing = false
-        if (scrollRecyclerUp) {
+        if (scrollRecyclerUp && feedAdapter.newsList.isNotEmpty()) {
             feedRecycler.handler.postDelayed({
                 try {
                     feedRecycler.scrollToPosition(0)

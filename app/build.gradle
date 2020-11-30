@@ -14,6 +14,8 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "VK_TOKEN_PREFS_NAME", '"vk.prefs.login"'
     }
 
     buildTypes {
@@ -35,6 +37,8 @@ dependencies {
     implementation(
         project(path: ':ui'),
         project(path: ':network'),
+        project(path: ':feature-newsfeed'),
+        project(path: ':feature-auth'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
         "androidx.core:core-ktx:$androidXCoreKtxVersion",

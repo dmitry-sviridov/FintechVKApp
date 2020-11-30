@@ -2,7 +2,7 @@ package ru.sviridov.vkclient.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.sviridov.vkclient.network.auth.TokenHolder
+import ru.sviridov.vkclient.feature_auth.handler.TokenHolder
 
 object QueryParameterInterceptor : Interceptor {
 
