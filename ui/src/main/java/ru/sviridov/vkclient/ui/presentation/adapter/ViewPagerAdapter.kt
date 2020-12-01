@@ -13,22 +13,31 @@ class ViewPagerAdapter(
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     // Init adapter with first tab, always required
-    private val fragments: MutableList<Fragment> = mutableListOf(FeedFragment.newInstance(FeedType.REGULAR_FEED))
+    private val fragments: MutableList<Fragment> =
+        mutableListOf(FeedFragment.newInstance(FeedType.REGULAR_FEED))
 
     // Two methods for dynamically managing Favourites tab
     fun addOptionalFavouritesFragment(fragment: Fragment) {
-        this.fragments.add(fragment)
-        notifyItemInserted(fragments.lastIndex)
+        fragments.add(fragment)
+        notifyDataSetChanged()
     }
 
     fun removeOptionalFavouritesFragment() {
         if (fragments.size > 1) {
-            this.fragments.removeLast()
+            fragments.removeLast()
             notifyDataSetChanged()
         }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return fragments[position].hashCode().toLong()
     }
 
     override fun getItemCount() = fragments.size
 
     override fun createFragment(position: Int): Fragment = fragments[position]
 }
+
+/*
+
+ */

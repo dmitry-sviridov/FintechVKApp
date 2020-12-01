@@ -30,15 +30,17 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
 
 
     override fun updateNews(timeDirection: FeedItemsDirection) {
-        val newsRequest: Single<NewsResponse> = if (timeDirection == FeedItemsDirection.PREVIOUS &&
+        val newsResponse: Single<NewsResponse> = if (timeDirection == FeedItemsDirection.PREVIOUS &&
             dataSource.nextFrom != null
         ) {
+            Log.d(TAG, "updateNews from ${dataSource.nextFrom}")
             apiService.getNews(dataSource.nextFrom!!)
         } else {
+            Log.d(TAG, "updateNews")
             apiService.getNews()
         }
 
-        val responseDisposable = newsRequest.subscribeOn(Schedulers.io())
+        val responseDisposable = newsResponse.subscribeOn(Schedulers.io())
             .doOnSuccess { dataSource.nextFrom = it.nextFrom }
             .map { resp -> converter.convertApiResponseToUi(resp) }
             .doAfterSuccess { list ->
@@ -48,8 +50,9 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onError = {
-                Log.d("RX", "fetch: ${it.message}")
+                Log.d(TAG, "responseDisposable: onError")
             }, onSuccess = { responseItems ->
+                Log.d(TAG, "responseDisposable: onSuccess")
                 if (timeDirection == FeedItemsDirection.PREVIOUS) {
                     dataSource.insertNewsItemsToSubjectBefore(responseItems)
                 } else {
@@ -61,12 +64,14 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
     }
 
     override fun fetchNews(): Observable<List<NewsItem>> {
+        Log.d(TAG, "fetchNews")
         return dataSource
             .newsListSubject
             .subscribeOn(Schedulers.io())
     }
 
     override fun fetchLikedFromDB(): Observable<List<NewsItem>> {
+        Log.d(TAG, "fetchLikedFromDB")
         return likedDao
             .getAllLiked()
             .subscribeOn(Schedulers.io())
@@ -78,7 +83,6 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
                     .toList()
                     .toObservable()
                     .onErrorReturnItem(emptyList())
-
             }
     }
 
@@ -95,9 +99,10 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
                 dataSource.newsListSubject.value?.let { list ->
                     val newList = list.toMutableList()
                     dataSource.newsListSubject.onNext(newList)
+                    Log.d(TAG, "setNewsItemLiked: likedDisposable on Success")
                 }
             }, onError = {
-                Log.d("RX", "setNewsItemDisliked: ${it.message}")
+                Log.d(TAG, "setNewsItemLiked: likedDisposable on Error")
             })
 
         compositeDisposable.add(likedDisposable)
@@ -111,10 +116,10 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                Log.d("RX", "setNewsItemDisliked ${it.likes}")
+                Log.d(TAG, "setNewsItemDisliked: dislikedDisposable onSuccess")
                 dataSource.updateNewsItemWithDislike(item)
             }, onError = {
-                Log.d("RX", "setNewsItemDisliked: ${it.message}")
+                Log.d(TAG, "setNewsItemDisliked: dislikedDisposable onError")
             })
 
         compositeDisposable.add(dislikedDisposable)
@@ -133,15 +138,9 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = {
-                    Log.d(
-                        "ROOM/RX",
-                        "insertItemToDB: post with id=${item.postId} has been inserted"
-                    )
+                    Log.d(TAG, "insertItemToDB: onSuccess")
                 }, onError = {
-                    Log.d(
-                        "ROOM/RX",
-                        "insertItemToDB: error during insert post with id=${item.postId} "
-                    )
+                    Log.d(TAG, "insertItemToDB: onError")
                 })
         )
     }
@@ -153,20 +152,18 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = {
-                    Log.d(
-                        "ROOM/RX",
-                        "removeItemFromDb: post with id=${item.postId} has been deleted"
-                    )
+                    Log.d(TAG, "removeItemFromDb: onSuccess")
                 }, onError = {
-                    Log.d(
-                        "ROOM/RX",
-                        "removeItemFromDb: error during deleting post with id=${item.postId} "
-                    )
+                    Log.d(TAG, "removeItemFromDb: onError")
                 })
         )
     }
 
     override fun onCleared() {
 //        compositeDisposable.clear()
+    }
+
+    companion object {
+        private const val TAG = "NewsFeedRepositoryImpl"
     }
 }

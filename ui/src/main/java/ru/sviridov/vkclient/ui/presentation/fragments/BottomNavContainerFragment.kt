@@ -18,7 +18,7 @@ import ru.sviridov.vkclient.ui.presentation.viewmodel.NewsFeedGroupViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
-class NewsFeedGroupFragment : Fragment() {
+class BottomNavContainerFragment : Fragment() {
 
     @Inject
     internal lateinit var vmProvider: Provider<NewsFeedGroupViewModel>
@@ -71,7 +71,7 @@ class NewsFeedGroupFragment : Fragment() {
     }
 
     private fun setUpPagerAdapter() {
-        pagerAdapter = ViewPagerAdapter(requireActivity().supportFragmentManager, lifecycle)
+        pagerAdapter = ViewPagerAdapter(parentFragmentManager, lifecycle)
         fragmentViewPager.adapter = pagerAdapter
         fragmentViewPager.isUserInputEnabled = false
     }

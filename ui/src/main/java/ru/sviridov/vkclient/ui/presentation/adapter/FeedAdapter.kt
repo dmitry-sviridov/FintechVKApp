@@ -20,8 +20,6 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
     var newsList: List<NewsItem>
         set(value) {
             differ.submitList(value)
-            // Denis, without line above recycler didn't update list correctly.
-            // Don't know how to make particle update (notifyItemChanged, etc)
             notifyDataSetChanged()
         }
         get() = differ.currentList
@@ -44,7 +42,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.bind(newsList[position])
-        Log.d("TAG", "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
+        Log.d(TAG, "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
     }
 
     abstract inner class BaseViewHolder(view: FeedItemLayout) : RecyclerView.ViewHolder(view) {
@@ -64,6 +62,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
                         this.setLikeButtonDisabled()
                     }
                 } ?: this.setLikeButtonDisabled()
+
                 Glide.with(context)
                     .load(item.sourceAvatar)
                     .circleCrop()
@@ -82,6 +81,10 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
                         actionHandler.onImageViewClicked(url)
                     }
                 }
+
+                socialLikesView.setOnClickListener {
+                    actionHandler.onItemLiked(item, item.isLiked != true)
+                }
             }
         }
     }
@@ -97,5 +100,9 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
 
     override fun onItemApprove(position: Int) {
         actionHandler.onItemLiked(newsList[position], newsList[position].isLiked != true)
+    }
+
+    companion object {
+        private const val TAG = "FeedAdapter"
     }
 }

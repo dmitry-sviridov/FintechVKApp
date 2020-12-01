@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.sviridov.vkclient.ui.presentation.AlertDialogBuilder
+import ru.sviridov.vkclient.ui.presentation.fragments.BottomNavContainerFragment
 import ru.sviridov.vkclient.ui.presentation.fragments.FeedFragmentHost
 import ru.sviridov.vkclient.ui.presentation.fragments.FeedItemDetailsFragment
-import ru.sviridov.vkclient.ui.presentation.fragments.NewsFeedGroupFragment
 
 class MainActivity : AppCompatActivity(), FeedFragmentHost {
 
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
-        fragmentTransaction.replace(R.id.fragmentContainer, NewsFeedGroupFragment()).commit()
+        fragmentTransaction.replace(R.id.fragmentContainer, BottomNavContainerFragment()).commit()
 
     }
 

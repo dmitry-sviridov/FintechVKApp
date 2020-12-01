@@ -1,7 +1,9 @@
 package ru.sviridov.vkclient.ui.presentation.fragments
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,12 +102,17 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     private fun render(state: FeedViewState) {
         when (state) {
             FeedViewState.Loading -> renderLoadingState()
-            is FeedViewState.ShowApiError -> renderError(state.apiError)
+            FeedViewState.StopLoading -> stopLoadingState()
+            is FeedViewState.ShowError -> renderError(state.error)
             is FeedViewState.ShowNewsFeed -> renderUpdatedFeed(
                 state.newsList,
                 state.scrollRecyclerUp
             )
         }
+    }
+
+    private fun stopLoadingState() {
+        refreshLayout.isRefreshing = false
     }
 
     private fun setUpRefreshLayout() {
@@ -152,6 +159,11 @@ class FeedFragment : Fragment(), AdapterActionHandler {
                 }
             }, 500)
         }
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy: FEED_TYPE = $feedType")
+        super.onDestroy()
     }
 
     companion object {

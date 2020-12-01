@@ -37,6 +37,7 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
     }
 
     private fun startObservingCurrentSessionDataSourceToUIState() {
+        Log.d(TAG, "startObservingCurrentSessionDataSourceToUIState")
         val newsDisposable = feedRepository.fetchNews()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = { list ->
@@ -47,7 +48,7 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
                 Log.d(TAG, "newsDisposable :onNext, firstElement = ${list.first().postId}")
 
             }, onError = { throwable ->
-                viewState.value = FeedViewState.ShowApiError(throwable)
+                viewState.value = FeedViewState.ShowError(throwable)
                 Log.d(TAG, "newsDisposable :onError => ${throwable.message} ")
             })
         compositeDisposable.add(newsDisposable)
@@ -67,6 +68,7 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
                 )
                 Log.d(TAG, "likesDisposable :onNext, firstElement = ${list.first().postId}")
             }, onError = { throwable ->
+                viewState.value = FeedViewState.StopLoading
                 Log.d(TAG, "likesDisposable :onError => ${throwable.message} ")
             })
         compositeDisposable.add(likedNewsDisposable)

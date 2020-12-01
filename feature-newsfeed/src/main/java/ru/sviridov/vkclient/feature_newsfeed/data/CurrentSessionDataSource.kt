@@ -1,9 +1,12 @@
 package ru.sviridov.vkclient.feature_newsfeed.data
 
+import android.util.Log
 import io.reactivex.subjects.BehaviorSubject
 import ru.sviridov.component.feeditem.model.NewsItem
 
 object CurrentSessionDataSource {
+    private const val TAG = "DataSource"
+
     val newsListSubject = BehaviorSubject.create<List<NewsItem>>()
     var nextFrom: String? = null
 
@@ -19,6 +22,7 @@ object CurrentSessionDataSource {
         this.newsListSubject.value?.let { existingList ->
             newList.toMutableList().addAll(existingList)
         }
+        Log.d(TAG, "insertNewsItemsToSubjectAfter")
         this.newsListSubject.onNext(newList.distinct())
     }
 

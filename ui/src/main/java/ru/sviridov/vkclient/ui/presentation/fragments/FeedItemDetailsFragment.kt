@@ -1,6 +1,5 @@
 package ru.sviridov.vkclient.ui.presentation.fragments
 
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,7 +24,6 @@ import java.util.*
 class FeedItemDetailsFragment : Fragment() {
 
     private val imageURL: String by lazy { requireArguments().get(IMAGE_URL) as String }
-    private val contentResolver: ContentResolver by lazy { requireActivity().contentResolver }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
