@@ -16,6 +16,15 @@
         android:focusable="true" />
 
     <ImageView
+        android:id="@+id/saveImageButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/ic_save_image_64" />
+
+    <ImageView
         android:id="@+id/shareImageButton"
         android:layout_width="32dp"
         android:layout_height="32dp"

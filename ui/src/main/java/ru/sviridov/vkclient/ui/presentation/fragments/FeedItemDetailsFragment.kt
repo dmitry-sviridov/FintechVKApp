@@ -1,9 +1,14 @@
 package ru.sviridov.vkclient.ui.presentation.fragments
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +49,10 @@ class FeedItemDetailsFragment : Fragment() {
 
         shareImageButton.setOnClickListener {
             shareImage()
+        }
+
+        saveImageButton.setOnClickListener {
+            saveImage()
         }
     }
 
@@ -88,6 +97,54 @@ class FeedItemDetailsFragment : Fragment() {
 
     }
 
+    private fun saveImage() {
+        val applicationContext = activity?.applicationContext ?: return
+
+        val bitmap = detailsImageView.drawToBitmap()
+
+        val filesDir = applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val fileName = SimpleDateFormat("HH:mm:ss_yyyy-MM-dd").format(Date()) + ".jpg"
+
+        val file = File(filesDir, fileName)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+
+            val uri: Uri? = context?.contentResolver?.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                values
+            )
+            if (uri != null) {
+                applicationContext.contentResolver.openOutputStream(uri)?.let {
+                    saveImageToStream(
+                        bitmap,
+                        it
+                    )
+                }
+                values.put(MediaStore.Images.Media.IS_PENDING, false)
+                applicationContext.contentResolver.update(uri, values, null, null)
+            }
+        } else {
+            MediaStore.Images.Media.insertImage(
+                applicationContext.contentResolver,
+                bitmap,
+                fileName,
+                null
+            )
+        }
+
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            "File saved: ${file.canonicalPath}",
+            Snackbar.LENGTH_SHORT
+        ).show()
+        Log.d(TAG, "save image: ${file.canonicalPath}")
+    }
 
     companion object {
         const val IMAGE_URL = "image_url"
