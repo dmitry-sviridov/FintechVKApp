@@ -1,3 +1,4 @@
+include ':component-comment-model'
 include ':feature-auth'
 include ':feature-profile'
 include ':feature-newsfeed'

@@ -6,12 +6,12 @@ import dagger.Module
 import dagger.Provides
 import ru.sviridov.vkclient.feature_newsfeed.data.db.NewsDatabase
 import ru.sviridov.vkclient.feature_newsfeed.data.db.dao.LikedNewsItemDao
-import ru.sviridov.vkclient.feature_newsfeed.domain.FavouriteNewsRepository
-import ru.sviridov.vkclient.feature_newsfeed.domain.NewsConverter
-import ru.sviridov.vkclient.feature_newsfeed.domain.NewsFeedRepository
+import ru.sviridov.vkclient.feature_newsfeed.domain.*
+import ru.sviridov.vkclient.feature_newsfeed.domain.implementation.*
 import ru.sviridov.vkclient.feature_newsfeed.domain.implementation.FavouriteNewsRepositoryImpl
 import ru.sviridov.vkclient.feature_newsfeed.domain.implementation.NewsConverterImpl
 import ru.sviridov.vkclient.feature_newsfeed.domain.implementation.NewsFeedRepositoryImpl
+import ru.sviridov.vkclient.feature_newsfeed.domain.implementation.PostCommentRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -31,12 +31,18 @@ class NewsFeedDbModule {
 }
 
 @Module
-class NewsConverterModule {
+class ConvertersModule {
 
     @Provides
     @Singleton
     fun provideNewsConverter(): NewsConverter {
         return NewsConverterImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommentsConverter(): CommentsConverter {
+        return CommentsConverterImpl()
     }
 }
 
@@ -50,4 +56,12 @@ abstract class NewsFeedRepositoryModule {
     @Binds
     @Singleton
     internal abstract fun favouritesNewsRepository(impl: FavouriteNewsRepositoryImpl): FavouriteNewsRepository
+}
+
+@Module
+abstract class PostCommentRepositoryModule {
+
+    @Binds
+    @Singleton
+    internal abstract fun postCommentRepository(impl: PostCommentRepositoryImpl): PostCommentsRepository
 }

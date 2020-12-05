@@ -15,7 +15,8 @@ object NewsFeedInjector {
             .create(
                 context,
                 networkComponent.getNewsFeedService(),
-                networkComponent.getPostLikesService()
+                networkComponent.getPostLikesService(),
+                networkComponent.getWallService()
             )
             .also {
                 newsFeedComponent = it

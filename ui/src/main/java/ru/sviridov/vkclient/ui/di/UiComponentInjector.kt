@@ -13,7 +13,8 @@ object UiComponentInjector {
             .factory()
             .create(
                 newsFeedComponent.getNewsFeedRepositoryImpl(),
-                newsFeedComponent.getFavouritesNewsRepositoryImpl()
+                newsFeedComponent.getFavouritesNewsRepositoryImpl(),
+                newsFeedComponent.getPostCommentRepositoryImpl()
             )
             .also {
                 uiComponent = it

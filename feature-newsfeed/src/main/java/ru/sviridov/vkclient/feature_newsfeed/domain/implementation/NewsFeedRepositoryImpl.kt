@@ -28,7 +28,6 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
     private val dataSource = CurrentSessionDataSource
     private val compositeDisposable = CompositeDisposable()
 
-
     override fun updateNews(timeDirection: FeedItemsDirection) {
         val newsResponse: Single<NewsResponse> = if (timeDirection == FeedItemsDirection.PREVIOUS &&
             dataSource.nextFrom != null
@@ -67,7 +66,6 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
         Log.d(TAG, "fetchNews")
         return dataSource
             .newsListSubject
-            .subscribeOn(Schedulers.io())
     }
 
     override fun fetchLikedFromDB(): Observable<List<NewsItem>> {
@@ -160,10 +158,10 @@ internal class NewsFeedRepositoryImpl @Inject constructor(
     }
 
     override fun onCleared() {
-//        compositeDisposable.clear()
+        compositeDisposable.clear()
     }
 
     companion object {
-        private const val TAG = "NewsFeedRepositoryImpl"
+        private val TAG = "NewsFeedRepositoryImpl" + "@" + this.hashCode()
     }
 }

@@ -1,7 +1,11 @@
 package ru.sviridov.vkclient.ui
 
+import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.widget.EditText
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.vkclient.ui.presentation.adapter.NewsFeedViewType
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun NewsItem.getItemType(): NewsFeedViewType {
@@ -20,13 +24,29 @@ fun NewsItem.getItemType(): NewsFeedViewType {
     return NewsFeedViewType.UNKNOWN
 }
 
-fun NewsItem.getPostedAtDate(): Date {
-    var result: Date
+@SuppressLint("ClickableViewAccessibility")
+fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
+    this.setOnTouchListener { v, event ->
+        var hasConsumed = false
+        if (v is EditText) {
+            if (event.x >= v.width - v.totalPaddingRight) {
+                if (event.action == MotionEvent.ACTION_UP) {
+                    onClicked(this)
+                }
+                hasConsumed = true
+            }
+        }
+        hasConsumed
+    }
+}
+
+fun NewsItem.getDateTime(): String? {
+    val sdf = SimpleDateFormat("HH:mm MM/dd/yy", Locale.getDefault())
     try {
-        result = Date(postedAt.toLong() * 1000)
+        val netDate = Date(postedAt * 1000)
+        return sdf.format(netDate)
     } catch (e: Exception) {
         e.printStackTrace()
-        result = Date()
+        return sdf.format(Date())
     }
-    return result
 }

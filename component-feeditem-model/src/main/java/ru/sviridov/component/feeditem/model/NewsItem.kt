@@ -4,7 +4,7 @@ class NewsItem(
     val postId: Int,
     val sourceId: Int,
     var sourceTitle: String,
-    val postedAt: Int,
+    val postedAt: Long,
     var sourceAvatar: String,
     var imageUrl: String?,
     var textContent: String?,

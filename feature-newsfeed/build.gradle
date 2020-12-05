@@ -70,6 +70,7 @@ dependencies {
             // Dagger
             "com.google.dagger:dagger:$dagger2Version"
     )
+    implementation project(path: ':component-comment-model')
 
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"

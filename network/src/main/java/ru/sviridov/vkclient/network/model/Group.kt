@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Group(
     var description: String?,
-    val id: Int,
     @JsonProperty("is_admin") val isAdmin: Int,
     @JsonProperty("admin_level") var adminLevel: Int? = 0,
     @JsonProperty("is_closed") val isClosed: Int,
@@ -17,4 +16,4 @@ data class Group(
     @JsonProperty("photo_50") val photoWithSize50: String,
     @JsonProperty("screen_name") val screenName: String,
     val type: String
-)
+): EntityModel()

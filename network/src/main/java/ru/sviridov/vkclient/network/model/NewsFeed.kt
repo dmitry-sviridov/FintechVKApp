@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class NewsFeed(
     var attachments: List<Attachment>? = emptyList(),
     var comments: Comments?,
-    val date: Int,
+    val date: Long,
     var likes: Likes?,
     @JsonProperty("marked_as_ads") val markedAsAds: Int,
     @JsonProperty("post_id") val postId: Int,

@@ -6,12 +6,14 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import ru.sviridov.vkclient.network.NetworkConstants
 import ru.sviridov.vkclient.network.QueryParameterInterceptor
 import javax.inject.Singleton
+
 
 @Module
 class NetworkCommonModule {
@@ -28,9 +30,13 @@ class NetworkCommonModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
         return OkHttpClient()
             .newBuilder()
             .addInterceptor(QueryParameterInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
     }
 

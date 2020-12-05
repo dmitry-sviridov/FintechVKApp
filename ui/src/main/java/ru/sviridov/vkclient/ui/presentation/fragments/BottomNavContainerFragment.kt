@@ -14,15 +14,16 @@ import ru.sviridov.vkclient.ui.di.UiComponentInjector
 import ru.sviridov.vkclient.ui.presentation.adapter.ViewPagerAdapter
 import ru.sviridov.vkclient.ui.presentation.enums.FeedType
 import ru.sviridov.vkclient.ui.presentation.enums.NewsFeedGroupState
-import ru.sviridov.vkclient.ui.presentation.viewmodel.NewsFeedGroupViewModel
+import ru.sviridov.vkclient.ui.presentation.fragments.newsfeed.FeedFragment
+import ru.sviridov.vkclient.ui.presentation.viewmodel.BottomNavContainerViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
 class BottomNavContainerFragment : Fragment() {
 
     @Inject
-    internal lateinit var vmProvider: Provider<NewsFeedGroupViewModel>
-    private val viewModel: NewsFeedGroupViewModel by viewModels { vmProvider.get() }
+    internal lateinit var vmProvider: Provider<BottomNavContainerViewModel>
+    private val viewModel: BottomNavContainerViewModel by viewModels { vmProvider.get() }
 
     private lateinit var pagerAdapter: ViewPagerAdapter
     private lateinit var menu: Menu
@@ -65,9 +66,15 @@ class BottomNavContainerFragment : Fragment() {
             Menu.NONE,
             MENU_ITEM_ID_ONE,
             MENU_ORDER_FIRST,
+            getString(R.string.menu_item_profile)
+        ).setIcon(R.drawable.ic_nav_profile)
+
+        menu.add(
+            Menu.NONE,
+            MENU_ITEM_ID_TWO,
+            MENU_ORDER_SECOND,
             getString(R.string.menu_item_newsfeed)
-        )
-            .setIcon(R.drawable.ic_nav_news)
+        ).setIcon(R.drawable.ic_nav_news)
     }
 
     private fun setUpPagerAdapter() {
@@ -79,8 +86,10 @@ class BottomNavContainerFragment : Fragment() {
     private fun setScreenState(state: NewsFeedGroupState) {
 
         if (state == NewsFeedGroupState.REGULAR_ONLY) {
+            fragmentViewPager.currentItem = MENU_ORDER_SECOND
+            bottomNavigationView.selectedItemId = MENU_ITEM_ID_TWO
             pagerAdapter.removeOptionalFavouritesFragment()
-            menu.removeItem(MENU_ITEM_ID_TWO)
+            menu.removeItem(MENU_ITEM_ID_THREE)
         }
 
         if (state == NewsFeedGroupState.REGULAR_AND_FAVOURITE) {
@@ -88,11 +97,10 @@ class BottomNavContainerFragment : Fragment() {
 
             menu.add(
                 Menu.NONE,
-                MENU_ITEM_ID_TWO,
-                MENU_ORDER_SECOND,
+                MENU_ITEM_ID_THREE,
+                MENU_ORDER_THIRD,
                 getString(R.string.menu_item_favourite_news)
-            )
-                .setIcon(R.drawable.ic_nav_favourite)
+            ).setIcon(R.drawable.ic_nav_favourite)
         }
     }
 
@@ -105,6 +113,9 @@ class BottomNavContainerFragment : Fragment() {
                 MENU_ITEM_ID_TWO -> {
                     fragmentViewPager.currentItem = MENU_ORDER_SECOND
                 }
+                MENU_ITEM_ID_THREE -> {
+                    fragmentViewPager.currentItem = MENU_ORDER_THIRD
+                }
             }
             return@setOnNavigationItemSelectedListener true
         }
@@ -113,7 +124,10 @@ class BottomNavContainerFragment : Fragment() {
     companion object {
         const val MENU_ITEM_ID_ONE = 1111
         const val MENU_ITEM_ID_TWO = 2222
+        const val MENU_ITEM_ID_THREE = 3333
+
         const val MENU_ORDER_FIRST = 0
         const val MENU_ORDER_SECOND = 1
+        const val MENU_ORDER_THIRD = 2
     }
 }

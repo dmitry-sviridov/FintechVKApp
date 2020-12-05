@@ -1,4 +1,4 @@
-package ru.sviridov.vkclient.ui.presentation.mvi
+package ru.sviridov.vkclient.ui.presentation.mvi.newsfeed
 
 import ru.sviridov.component.feeditem.model.NewsItem
 

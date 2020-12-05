@@ -5,6 +5,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 import ru.sviridov.vkclient.network.service.NewsFeedService
 import ru.sviridov.vkclient.network.service.PostLikesService
+import ru.sviridov.vkclient.network.service.WallService
 import javax.inject.Singleton
 
 @Module
@@ -20,5 +21,11 @@ class NetworkServicesModule {
     @Singleton
     fun providePostLikesService(retrofit: Retrofit): PostLikesService {
         return retrofit.create(PostLikesService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWallService(retrofit: Retrofit): WallService {
+        return retrofit.create(WallService::class.java)
     }
 }

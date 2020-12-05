@@ -6,8 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.sviridov.vkclient.ui.presentation.AlertDialogBuilder
 import ru.sviridov.vkclient.ui.presentation.fragments.BottomNavContainerFragment
-import ru.sviridov.vkclient.ui.presentation.fragments.FeedFragmentHost
-import ru.sviridov.vkclient.ui.presentation.fragments.FeedItemDetailsFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.comments.PostCommentsFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.newsfeed.FeedFragmentHost
+import ru.sviridov.vkclient.ui.presentation.fragments.details.FeedItemDetailsFragment
 
 class MainActivity : AppCompatActivity(), FeedFragmentHost {
 
@@ -31,6 +32,18 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
         val fragmentDetails = FeedItemDetailsFragment.newInstance(url)
         supportFragmentManager.beginTransaction()
             .add(android.R.id.content, fragmentDetails)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun openCommentFragment(sourceId: Int, postId: Int) {
+        val commentFragment = PostCommentsFragment
+            .newInstance(
+                postId,
+                sourceId
+            )
+        supportFragmentManager.beginTransaction()
+            .add(android.R.id.content, commentFragment)
             .addToBackStack(null)
             .commit()
     }

@@ -5,7 +5,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ru.sviridov.vkclient.ui.presentation.enums.FeedType
-import ru.sviridov.vkclient.ui.presentation.fragments.FeedFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.newsfeed.FeedFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.profile.ProfileFragment
 
 class ViewPagerAdapter(
     fragmentManager: FragmentManager,
@@ -13,7 +14,10 @@ class ViewPagerAdapter(
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     private val fragments: MutableList<Fragment> =
-        mutableListOf(FeedFragment.newInstance(FeedType.REGULAR_FEED))
+        mutableListOf(
+            ProfileFragment.newInstance(),
+            FeedFragment.newInstance(FeedType.REGULAR_FEED)
+        )
 
     fun addOptionalFavouritesFragment(fragment: Fragment) {
         fragments.add(fragment)
@@ -21,7 +25,7 @@ class ViewPagerAdapter(
     }
 
     fun removeOptionalFavouritesFragment() {
-        if (fragments.size > 1) {
+        if (fragments.size > 2) {
             fragments.removeLast()
             notifyDataSetChanged()
         }

@@ -1,4 +1,4 @@
-package ru.sviridov.vkclient.ui.presentation.viewmodel
+package ru.sviridov.vkclient.ui.presentation.viewmodel.newsfeed
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -6,21 +6,23 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.vkclient.feature_newsfeed.FeedItemsDirection
 import ru.sviridov.vkclient.feature_newsfeed.domain.NewsFeedRepository
-import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewActions
-import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewState
+import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewActions
+import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewState
 import javax.inject.Inject
 
 class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepository) :
     ViewModel() {
 
+    private val TAG = FeedViewModel::class.simpleName + "@" + this.hashCode()
+
     private var shouldRecyclerBeScrolled = false
     private val compositeDisposable = CompositeDisposable()
 
     private var isRequestIsFirst = true
-    private var repositoryShouldBeCleared = true
 
     val viewState: MutableLiveData<FeedViewState> = MutableLiveData()
 
@@ -39,6 +41,7 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
     private fun startObservingCurrentSessionDataSourceToUIState() {
         Log.d(TAG, "startObservingCurrentSessionDataSourceToUIState")
         val newsDisposable = feedRepository.fetchNews()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = { list ->
                 viewState.value = FeedViewState.ShowNewsFeed(
@@ -48,25 +51,22 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
                 Log.d(TAG, "newsDisposable :onNext, firstElement = ${list.first().postId}")
 
             }, onError = { throwable ->
-                viewState.value = FeedViewState.ShowError(throwable)
-                Log.d(TAG, "newsDisposable :onError => ${throwable.message} ")
+                viewState.value = FeedViewState.StopLoading
+                Log.e(TAG, "newsDisposable :onError => ${throwable.message} ")
             })
         compositeDisposable.add(newsDisposable)
     }
 
     private fun startObservingLikedNewsFromDBToUIState() {
-        repositoryShouldBeCleared =
-            false // Для предотвращения очистки репозитория в случае Favourites
-
         val likedNewsDisposable = feedRepository
             .fetchLikedFromDB()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = { list ->
+                Log.d(TAG, "likesDisposable :onNext, firstElement = ${list.first().postId}")
                 viewState.value = FeedViewState.ShowNewsFeed(
                     newsList = list,
                     scrollRecyclerUp = false
                 )
-                Log.d(TAG, "likesDisposable :onNext, firstElement = ${list.first().postId}")
             }, onError = { throwable ->
                 viewState.value = FeedViewState.StopLoading
                 Log.d(TAG, "likesDisposable :onError => ${throwable.message} ")
@@ -103,14 +103,8 @@ class FeedViewModel @Inject constructor(private val feedRepository: NewsFeedRepo
 
     override fun onCleared() {
         Log.d(TAG, "onCleared")
-        super.onCleared()
         compositeDisposable.dispose()
-        if (repositoryShouldBeCleared) {
-            feedRepository.onCleared()
-        }
+        super.onCleared()
     }
 
-    companion object {
-        private val TAG = FeedViewModel::class.simpleName
-    }
 }

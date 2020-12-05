@@ -7,7 +7,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import ru.sviridov.vkclient.feature_newsfeed.domain.FavouriteNewsRepository
 import javax.inject.Inject
 
-class NewsFeedGroupViewModel @Inject constructor(
+class BottomNavContainerViewModel @Inject constructor(
     private val favouriteNewsRepository: FavouriteNewsRepository
 ) : ViewModel() {
 

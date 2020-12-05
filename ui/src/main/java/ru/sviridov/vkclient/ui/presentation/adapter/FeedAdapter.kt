@@ -7,20 +7,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.feed_item_layout.view.*
 import ru.sviridov.component.feeditem.model.NewsItem
+import ru.sviridov.vkclient.ui.getDateTime
 import ru.sviridov.vkclient.ui.getItemType
-import ru.sviridov.vkclient.ui.getPostedAtDate
 import ru.sviridov.vkclient.ui.presentation.adapter.NewsFeedViewType.*
 import ru.sviridov.vkclient.ui.presentation.layout.FeedItemLayout
 
-class FeedAdapter(val actionHandler: AdapterActionHandler) :
+class FeedAdapter(val actionHandler: FeedAdapterActionHandler) :
     RecyclerView.Adapter<FeedAdapter.BaseViewHolder>(),
     ItemTouchHelperAdapter {
 
     private val differ = AsyncListDiffer(this, FeedDiffUtilsCallback())
     var newsList: List<NewsItem>
         set(value) {
-            differ.submitList(value)
-            notifyDataSetChanged()
+            Log.d(TAG, "oldList has size: ${newsList.size}")
+            differ.submitList(value, (Runnable {
+                Log.d(TAG, "newList has size: ${newsList.size}")
+                notifyDataSetChanged()
+            }))
         }
         get() = differ.currentList
 
@@ -42,7 +45,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.bind(newsList[position])
-        Log.d(TAG, "onBindViewHolder: ${newsList[position].getPostedAtDate()}")
+        Log.d(TAG, "onBindViewHolder: isLiked = ${newsList[position].isLiked}")
     }
 
     abstract inner class BaseViewHolder(view: FeedItemLayout) : RecyclerView.ViewHolder(view) {
@@ -50,7 +53,7 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
         fun bind(item: NewsItem) {
             (itemView as FeedItemLayout).apply {
                 postWriterTitleTextView.text = item.sourceTitle
-                postCreatedAgoTextView.text = item.postedAt.toString()
+                postCreatedAgoTextView.text = item.getDateTime()
                 socialLikesView.text = item.likesCount.toString()
                 socialRepostsView.text = item.shareCount.toString()
                 socialCommentsView.text = item.commentCount.toString()
@@ -84,6 +87,10 @@ class FeedAdapter(val actionHandler: AdapterActionHandler) :
 
                 socialLikesView.setOnClickListener {
                     actionHandler.onItemLiked(item, item.isLiked != true)
+                }
+
+                socialCommentsView.setOnClickListener {
+                    actionHandler.onCommentsClicked(item)
                 }
             }
         }

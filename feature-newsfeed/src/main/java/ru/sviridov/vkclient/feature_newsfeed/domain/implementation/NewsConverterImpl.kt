@@ -4,67 +4,68 @@ import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.vkclient.feature_newsfeed.data.db.entity.NewsItemEntity
 import ru.sviridov.vkclient.feature_newsfeed.domain.NewsConverter
 import ru.sviridov.vkclient.network.dto.NewsResponse
-import kotlin.math.abs
+import ru.sviridov.vkclient.network.model.EntityModel
+import java.lang.Math.abs
 
 internal class NewsConverterImpl : NewsConverter {
     override fun convertApiResponseToUi(dto: NewsResponse): List<NewsItem> {
-        val newsItems = dto.items.asSequence().map {
-            NewsItem(
-                postId = it.postId,
-                sourceId = it.sourceId,
-                sourceTitle = it.sourceId.toString(),
-                postedAt = it.date,
-                sourceAvatar = "",
-                imageUrl = "",
-                textContent = it.text,
-                likesCount = it.likes?.count ?: 0,
-                shareCount = it.reposts?.count ?: 0,
-                commentCount = it.comments?.count ?: 0,
-                viewsCount = it.views?.count ?: 0,
-                isLiked = it.likes?.userLikes == 1
-            )
-        }.toMutableList()
 
-        newsItems.forEach {
+        val newsItems = dto.items
+            .filter { it.likes?.canLike == 1 && it.markedAsAds == 0 }
+            .map { feed ->
+                val isFromGroup: Boolean
+                val index: Int
 
-            if (dto.groups.firstOrNull { group -> group.id == abs(it.sourceTitle.toInt()) } != null) {
-                dto.groups.first { group ->
-                    group.id == abs(it.sourceTitle.toInt())
-                }.also { group ->
-                    it.sourceTitle = group.name
-                    it.sourceAvatar = group.photoWithSize50
+                if (checkListContainsId(abs(feed.sourceId), dto.groups)) {
+                    isFromGroup = true
+                    index = dto.groups.indexOfFirst { group -> group.id == Math.abs(feed.sourceId)}
+                } else {
+                    isFromGroup = false
+                    index = dto.profiles.indexOfFirst { profile -> profile.id == abs(feed.sourceId) }
                 }
-            } else {
-                dto.profiles.first { profile -> profile.id == abs(it.sourceTitle.toInt()) }
-                    .also { profile ->
-                        it.sourceTitle = "${profile.firstName} ${profile.lastName}"
-                        it.sourceAvatar = profile.photoWithSize50
-                    }
-            }
 
-            it.imageUrl = dto.items.firstOrNull { item ->
-                item.text == it.textContent
-            }?.attachments?.firstOrNull { attachment ->
-                attachment.type == "photo"
-            }?.photo?.sizes?.maxByOrNull { by -> by.height }?.url
-        }
+                return@map NewsItem(
+                    postId = feed.postId,
+                    sourceId = feed.sourceId,
+                    sourceTitle = if (isFromGroup) {
+                        dto.groups[index].name
+                    } else {
+                        "${dto.profiles[index].firstName} ${dto.profiles[index].lastName}"
+                    },
+                    postedAt = feed.date,
+                    sourceAvatar = if (isFromGroup) {
+                        dto.groups[index].photoWithSize100
+                    } else {
+                        dto.profiles[index].photoWithSize100
+                    },
+                    imageUrl = feed.attachments?.firstOrNull { attachment ->
+                        attachment.type == "photo"
+                    }?.photo?.sizes?.maxByOrNull { by -> by.height }?.url,
+                    textContent = feed.text,
+                    likesCount = feed.likes?.count ?: 0,
+                    shareCount = feed.reposts?.count ?: 0,
+                    commentCount = feed.comments?.count ?: 0,
+                    viewsCount = feed.views?.count ?: 0,
+                    isLiked = feed.likes?.userLikes == 1
+                )
+            }.toList()
         return newsItems
     }
 
     override fun convertDbToUi(entity: NewsItemEntity) = NewsItem(
-            postId = entity.postId,
-            sourceId = entity.sourceId,
-            sourceTitle = entity.sourceTitle,
-            sourceAvatar = entity.sourceAvatar,
-            postedAt = entity.postedAt,
-            imageUrl = entity.imageUrl,
-            textContent = entity.textContent,
-            likesCount = entity.likesCount,
-            shareCount = entity.shareCount,
-            commentCount = entity.commentCount,
-            viewsCount = entity.viewsCount,
-            isLiked = entity.isLiked
-        )
+        postId = entity.postId,
+        sourceId = entity.sourceId,
+        sourceTitle = entity.sourceTitle,
+        sourceAvatar = entity.sourceAvatar,
+        postedAt = entity.postedAt,
+        imageUrl = entity.imageUrl,
+        textContent = entity.textContent,
+        likesCount = entity.likesCount,
+        shareCount = entity.shareCount,
+        commentCount = entity.commentCount,
+        viewsCount = entity.viewsCount,
+        isLiked = entity.isLiked
+    )
 
     override fun convertUiToDb(item: NewsItem) = NewsItemEntity(
         postId = item.postId,
@@ -80,4 +81,8 @@ internal class NewsConverterImpl : NewsConverter {
         viewsCount = item.viewsCount,
         isLiked = item.isLiked
     )
+
+    private fun checkListContainsId(requestedId: Int, entityList: List<EntityModel>): Boolean {
+        return entityList.firstOrNull { entity -> entity.id == requestedId } != null
+    }
 }

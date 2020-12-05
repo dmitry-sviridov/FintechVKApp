@@ -10,6 +10,7 @@ object CurrentSessionDataSource {
     val newsListSubject = BehaviorSubject.create<List<NewsItem>>()
     var nextFrom: String? = null
 
+    @Synchronized
     fun insertNewsItemsToSubjectBefore(newList: List<NewsItem>) {
         this.newsListSubject.value?.let { existingList ->
             val holder = existingList.toMutableList()
@@ -18,14 +19,17 @@ object CurrentSessionDataSource {
         } ?: this.newsListSubject.onNext(newList)
     }
 
+    @Synchronized
     fun insertNewsItemsToSubjectAfter(newList: List<NewsItem>) {
         this.newsListSubject.value?.let { existingList ->
             newList.toMutableList().addAll(existingList)
         }
-        Log.d(TAG, "insertNewsItemsToSubjectAfter")
+        Log.d(TAG, "insertNewsItemsToSubjectAfter - before onNext")
         this.newsListSubject.onNext(newList.distinct())
+        Log.d(TAG, "insertNewsItemsToSubjectAfter - after onNext")
     }
 
+    @Synchronized
     fun updateNewsItemWithDislike(dislikedItem: NewsItem) {
         this.newsListSubject.value?.let { list ->
             val newList = list.toMutableList()
@@ -39,6 +43,7 @@ object CurrentSessionDataSource {
         }
     }
 
+    @Synchronized
     fun removeItem(item: NewsItem) {
         this.newsListSubject.value?.let { list ->
             val newList = list.toMutableList()

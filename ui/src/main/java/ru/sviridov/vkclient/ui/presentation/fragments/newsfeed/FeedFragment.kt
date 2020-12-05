@@ -1,6 +1,5 @@
-package ru.sviridov.vkclient.ui.presentation.fragments
+package ru.sviridov.vkclient.ui.presentation.fragments.newsfeed
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -18,17 +17,19 @@ import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.core.extension.viewModels
 import ru.sviridov.vkclient.ui.R
 import ru.sviridov.vkclient.ui.di.UiComponentInjector
-import ru.sviridov.vkclient.ui.presentation.adapter.AdapterActionHandler
+import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapterActionHandler
 import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapter
 import ru.sviridov.vkclient.ui.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.vkclient.ui.presentation.enums.FeedType
-import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewActions
-import ru.sviridov.vkclient.ui.presentation.mvi.FeedViewState
-import ru.sviridov.vkclient.ui.presentation.viewmodel.FeedViewModel
+import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewActions
+import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewState
+import ru.sviridov.vkclient.ui.presentation.viewmodel.newsfeed.FeedViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FeedFragment : Fragment(), AdapterActionHandler {
+class FeedFragment : Fragment(), FeedAdapterActionHandler {
+
+    private val TAG = "FeedFragment" + "@" + this.hashCode()
 
     private val feedAdapter: FeedAdapter by lazy { FeedAdapter(this) }
     private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
@@ -39,6 +40,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.d(TAG, "onAttach $feedType")
         UiComponentInjector.getComponent().inject(this)
     }
 
@@ -46,16 +48,21 @@ class FeedFragment : Fragment(), AdapterActionHandler {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView $feedType")
         return inflater.inflate(R.layout.fragment_feed, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated: $feedType")
         refreshLayout.isEnabled = false
 
         feedViewModel.viewState.observe(viewLifecycleOwner, { viewState ->
+            Log.e(TAG, "observing viewstate: $viewState ")
             render(viewState)
         })
+
+        initRecycler()
 
         if (feedType == FeedType.REGULAR_FEED) {
             setUpRefreshLayout()
@@ -63,7 +70,6 @@ class FeedFragment : Fragment(), AdapterActionHandler {
         } else {
             feedViewModel.handleAction(FeedViewActions.GetLikedNews)
         }
-        initRecycler()
     }
 
     private fun initRecycler() {
@@ -112,6 +118,7 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     private fun stopLoadingState() {
+        Log.e(TAG, "stopLoadingState", )
         refreshLayout.isRefreshing = false
     }
 
@@ -124,6 +131,10 @@ class FeedFragment : Fragment(), AdapterActionHandler {
 
     override fun onImageViewClicked(url: String) {
         (requireActivity() as FeedFragmentHost).openDetails(url)
+    }
+
+    override fun onCommentsClicked(item: NewsItem) {
+        (requireActivity() as FeedFragmentHost).openCommentFragment(item.sourceId, item.postId)
     }
 
     override fun onItemHided(item: NewsItem) {
@@ -139,15 +150,19 @@ class FeedFragment : Fragment(), AdapterActionHandler {
     }
 
     private fun renderLoadingState() {
+        Log.e(TAG, "renderLoadingState", )
         refreshLayout.isRefreshing = true
     }
 
     private fun renderError(apiError: Throwable) {
+        Log.e(TAG, "renderError", )
         (requireActivity() as FeedFragmentHost).showErrorDialog(apiError.message)
         refreshLayout.isRefreshing = false
     }
 
     private fun renderUpdatedFeed(newList: List<NewsItem>, scrollRecyclerUp: Boolean) {
+        Log.e(TAG, "renderUpdatedFeed: newList.size = ${newList.size}")
+
         feedAdapter.newsList = newList
         refreshLayout.isRefreshing = false
         if (scrollRecyclerUp && feedAdapter.newsList.isNotEmpty()) {
@@ -158,6 +173,16 @@ class FeedFragment : Fragment(), AdapterActionHandler {
                     e.printStackTrace()
                 }
             }, 500)
+        } else if (feedType == FeedType.FAVOURITE && feedAdapter.newsList.isNotEmpty()) {
+            /*
+              Грязный хак для обработки ситуации, когда вкладка с избранным появляется,
+              но сначала переходим на таб с профилем и из него - на таб с избранным.
+              До прокрутки / тач-евента на ресайклере не вызывается onBindViewHolder - хз почему
+              ---
+              Можете бить меня палками, если причина очевидна и должна быть понятна ежу, но я честно
+              часов 6 потратил и не нашел причины.
+             */
+            feedRecycler.smoothScrollBy(0,1)
         }
     }
 

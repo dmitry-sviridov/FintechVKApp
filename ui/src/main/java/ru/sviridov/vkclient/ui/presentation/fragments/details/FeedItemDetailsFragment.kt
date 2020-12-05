@@ -1,4 +1,4 @@
-package ru.sviridov.vkclient.ui.presentation.fragments
+package ru.sviridov.vkclient.ui.presentation.fragments.details
 
 import android.content.ContentValues
 import android.content.Context
