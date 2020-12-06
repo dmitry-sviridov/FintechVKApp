@@ -34,7 +34,7 @@
 
     <include
         android:id="@+id/errorView"
-        layout="@layout/fetch_comments_error"
+        layout="@layout/fetch_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

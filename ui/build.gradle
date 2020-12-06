@@ -36,9 +36,12 @@ android {
 dependencies {
     implementation(
         project(path: ':network'),
-        project(path: ':component-feeditem-model'),
         project(path: ':core'),
+        project(path: ':component-feeditem-model'),
+        project(path: ':component-profile-model'),
+        project(path: ':component-comment-model'),
         project(path: ':feature-newsfeed'),
+        project(path: ':feature-profile'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
 
@@ -76,9 +79,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    implementation project(path: ':component-comment-model')
-    implementation project(path: ':feature-profile')
-    implementation project(path: ':component-profile-model')
+
 
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"

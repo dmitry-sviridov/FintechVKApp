@@ -13,4 +13,5 @@
     <string name="empty_comments_list_state_text">Тут пусто (а возможно и нет, но я умею отображать только текстовые комменты</string>
     <string name="no_data">нет данных</string>
     <string name="wall_title">Стена</string>
+    <string name="empty_wall_text">Тут пусто (а возможно и нет, просто я умею отображать только новости с картинкой или текстом</string>
 </resources>

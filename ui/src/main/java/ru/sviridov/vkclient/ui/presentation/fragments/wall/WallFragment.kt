@@ -98,16 +98,26 @@ class WallFragment : Fragment(), PostAdapterActionHandler {
     }
 
     private fun renderEmpty() {
+        errorView.visibility = View.INVISIBLE
+        wallPostLoader.visibility = View.INVISIBLE
 
+        emptyView.visibility = View.VISIBLE
     }
 
     private fun renderError() {
+        wallPostLoader.visibility = View.INVISIBLE
+        emptyView.visibility = View.INVISIBLE
+
+        errorView.visibility = View.VISIBLE
     }
 
     private fun renderWallItems(fetchedList: List<NewsItem>) {
+        wallPostLoader.visibility = View.INVISIBLE
+        emptyView.visibility = View.INVISIBLE
+        errorView.visibility = View.INVISIBLE
+
         Log.d(TAG, "renderWallItems")
         wallAdapter.postList = fetchedList
-
     }
 
 

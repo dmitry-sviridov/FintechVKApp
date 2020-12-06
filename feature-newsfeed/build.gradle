@@ -36,6 +36,7 @@ dependencies {
     implementation(
             project(path: ':network'),
             project(path: ':component-feeditem-model'),
+            project(path: ':component-comment-model'),
 
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
 
@@ -70,8 +71,6 @@ dependencies {
             // Dagger
             "com.google.dagger:dagger:$dagger2Version"
     )
-    implementation project(path: ':component-comment-model')
-
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"

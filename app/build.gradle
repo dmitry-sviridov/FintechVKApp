@@ -39,6 +39,7 @@ dependencies {
         project(path: ':network'),
         project(path: ':feature-newsfeed'),
         project(path: ':feature-auth'),
+        project(path: ':feature-profile'),
 
         "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
         "androidx.core:core-ktx:$androidXCoreKtxVersion",
@@ -49,7 +50,6 @@ dependencies {
         // Dagger
         "com.google.dagger:dagger:$dagger2Version"
     )
-    implementation project(path: ':feature-profile')
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"
 }
