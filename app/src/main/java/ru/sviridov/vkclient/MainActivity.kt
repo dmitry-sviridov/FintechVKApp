@@ -3,14 +3,17 @@ package ru.sviridov.vkclient
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import ru.sviridov.vkclient.ui.presentation.AlertDialogBuilder
 import ru.sviridov.vkclient.ui.presentation.fragments.BottomNavContainerFragment
 import ru.sviridov.vkclient.ui.presentation.fragments.comments.PostCommentsFragment
 import ru.sviridov.vkclient.ui.presentation.fragments.newsfeed.FeedFragmentHost
 import ru.sviridov.vkclient.ui.presentation.fragments.details.FeedItemDetailsFragment
+import ru.sviridov.vkclient.ui.presentation.fragments.profile.WallFragmentHost
+import ru.sviridov.vkclient.ui.presentation.fragments.wall.WallFragment
 
-class MainActivity : AppCompatActivity(), FeedFragmentHost {
+class MainActivity : AppCompatActivity(), FeedFragmentHost, WallFragmentHost {
 
     private var savedStateIsExists = false
 
@@ -44,6 +47,16 @@ class MainActivity : AppCompatActivity(), FeedFragmentHost {
             )
         supportFragmentManager.beginTransaction()
             .add(android.R.id.content, commentFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun openWallFragment(profileId: Int) {
+        val wallFragment = WallFragment
+            .newInstance(profileId)
+
+        supportFragmentManager.beginTransaction()
+            .add(android.R.id.content, wallFragment)
             .addToBackStack(null)
             .commit()
     }

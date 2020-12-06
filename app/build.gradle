@@ -49,6 +49,7 @@ dependencies {
         // Dagger
         "com.google.dagger:dagger:$dagger2Version"
     )
+    implementation project(path: ':feature-profile')
     kapt "com.google.dagger:dagger-compiler:$dagger2Version"
     kapt "androidx.room:room-compiler:$roomVersion"
 }

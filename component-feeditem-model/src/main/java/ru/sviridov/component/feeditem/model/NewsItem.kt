@@ -12,7 +12,8 @@ class NewsItem(
     val shareCount: Int,
     val commentCount: Int,
     val viewsCount: Int,
-    var isLiked: Boolean? = null
+    var isLiked: Boolean? = null,
+    var isRepost: Boolean = false
 ) {
 
     override fun equals(other: Any?): Boolean {

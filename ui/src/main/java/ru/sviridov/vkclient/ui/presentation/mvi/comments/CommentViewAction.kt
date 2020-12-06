@@ -1,6 +1,6 @@
 package ru.sviridov.vkclient.ui.presentation.mvi.comments
 
-import ru.sviridov.vkclient.feature_newsfeed.model.CommentModel
+import ru.sviridov.vkclient.feature.newsfeed.model.CommentModel
 
 sealed class CommentViewAction {
     class FetchComments(val postId: Int, val ownerId: Int): CommentViewAction()

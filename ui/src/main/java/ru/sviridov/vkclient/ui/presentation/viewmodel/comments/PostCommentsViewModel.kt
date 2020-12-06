@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
-import ru.sviridov.vkclient.feature_newsfeed.domain.PostCommentsRepository
-import ru.sviridov.vkclient.feature_newsfeed.model.CommentModel
+import ru.sviridov.vkclient.feature.newsfeed.domain.PostCommentsRepository
+import ru.sviridov.vkclient.feature.newsfeed.model.CommentModel
 import ru.sviridov.vkclient.ui.presentation.mvi.comments.CommentViewAction
 import ru.sviridov.vkclient.ui.presentation.mvi.comments.CommentViewState
 import javax.inject.Inject

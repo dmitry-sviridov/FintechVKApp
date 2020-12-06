@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import ru.sviridov.vkclient.feature_newsfeed.domain.FavouriteNewsRepository
+import ru.sviridov.vkclient.feature.newsfeed.domain.FavouriteNewsRepository
 import javax.inject.Inject
 
 class BottomNavContainerViewModel @Inject constructor(

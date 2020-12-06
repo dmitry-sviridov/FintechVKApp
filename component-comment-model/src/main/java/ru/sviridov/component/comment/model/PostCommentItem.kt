@@ -5,6 +5,7 @@ data class PostCommentItem(
     val ownerId: Int,
     val ownerName: String,
     val ownerProfileImageUrl: String?,
+    val ownerOnline: Boolean,
     val commentId: Int,
     val textContent: String,
     val likesCount: Int,

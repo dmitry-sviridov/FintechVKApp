@@ -1,6 +1,7 @@
 package ru.sviridov.vkclient
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.VKTokenExpiredHandler
@@ -14,6 +15,7 @@ class VkClientApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         initTokenPreferences()
 

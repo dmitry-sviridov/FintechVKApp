@@ -2,7 +2,8 @@ package ru.sviridov.vkclient.di
 
 import android.content.Context
 import ru.sviridov.vkclient.BuildConfig
-import ru.sviridov.vkclient.feature_newsfeed.di.NewsFeedInjector
+import ru.sviridov.vkclient.feature.newsfeed.di.NewsFeedInjector
+import ru.sviridov.vkclient.feature.profile.di.ProfileInjector
 import ru.sviridov.vkclient.network.di.NetworkInjector
 import ru.sviridov.vkclient.ui.di.UiComponentInjector
 
@@ -30,8 +31,14 @@ object AppInjector {
             networkComponent = NetworkInjector.getComponent()
         }
 
+        ProfileInjector.apply {
+            context = appComponent.context
+            networkComponent = NetworkInjector.getComponent()
+        }
+
         UiComponentInjector.apply {
             newsFeedComponent = NewsFeedInjector.getComponent()
+            profileComponent = ProfileInjector.getComponent()
             appId = BuildConfig.APPLICATION_ID
         }
     }

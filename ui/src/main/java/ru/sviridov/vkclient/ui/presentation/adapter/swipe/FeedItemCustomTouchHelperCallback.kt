@@ -9,10 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.sviridov.vkclient.ui.R
-import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapter
+import ru.sviridov.vkclient.ui.presentation.adapter.PostAdapter
 
 class FeedItemCustomTouchHelperCallback(
-    private val adapter: FeedAdapter,
+    private val adapter: PostAdapter,
     private val context: Context
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 

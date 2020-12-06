@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.post_comments_fragment.*
 import ru.sviridov.component.comment.model.PostCommentItem
 import ru.sviridov.core.extension.viewModels
-import ru.sviridov.vkclient.feature_newsfeed.model.CommentModel
+import ru.sviridov.vkclient.feature.newsfeed.model.CommentModel
 import ru.sviridov.vkclient.ui.R
 import ru.sviridov.vkclient.ui.di.UiComponentInjector
 import ru.sviridov.vkclient.ui.onRightDrawableClicked

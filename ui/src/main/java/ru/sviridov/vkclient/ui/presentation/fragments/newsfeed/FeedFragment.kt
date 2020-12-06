@@ -17,8 +17,8 @@ import ru.sviridov.component.feeditem.model.NewsItem
 import ru.sviridov.core.extension.viewModels
 import ru.sviridov.vkclient.ui.R
 import ru.sviridov.vkclient.ui.di.UiComponentInjector
-import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapterActionHandler
-import ru.sviridov.vkclient.ui.presentation.adapter.FeedAdapter
+import ru.sviridov.vkclient.ui.presentation.adapter.PostAdapterActionHandler
+import ru.sviridov.vkclient.ui.presentation.adapter.PostAdapter
 import ru.sviridov.vkclient.ui.presentation.adapter.swipe.FeedItemCustomTouchHelperCallback
 import ru.sviridov.vkclient.ui.presentation.enums.FeedType
 import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewActions
@@ -27,11 +27,11 @@ import ru.sviridov.vkclient.ui.presentation.viewmodel.newsfeed.FeedViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FeedFragment : Fragment(), FeedAdapterActionHandler {
+class FeedFragment : Fragment(), PostAdapterActionHandler {
 
     private val TAG = "FeedFragment" + "@" + this.hashCode()
 
-    private val feedAdapter: FeedAdapter by lazy { FeedAdapter(this) }
+    private val feedAdapter: PostAdapter by lazy { PostAdapter(this) }
     private val feedType: FeedType by lazy { requireArguments().get(FEED_TYPE) as FeedType }
 
     @Inject
@@ -163,9 +163,9 @@ class FeedFragment : Fragment(), FeedAdapterActionHandler {
     private fun renderUpdatedFeed(newList: List<NewsItem>, scrollRecyclerUp: Boolean) {
         Log.e(TAG, "renderUpdatedFeed: newList.size = ${newList.size}")
 
-        feedAdapter.newsList = newList
+        feedAdapter.postList = newList
         refreshLayout.isRefreshing = false
-        if (scrollRecyclerUp && feedAdapter.newsList.isNotEmpty()) {
+        if (scrollRecyclerUp && feedAdapter.postList.isNotEmpty()) {
             feedRecycler.handler.postDelayed({
                 try {
                     feedRecycler.scrollToPosition(0)
@@ -173,7 +173,7 @@ class FeedFragment : Fragment(), FeedAdapterActionHandler {
                     e.printStackTrace()
                 }
             }, 500)
-        } else if (feedType == FeedType.FAVOURITE && feedAdapter.newsList.isNotEmpty()) {
+        } else if (feedType == FeedType.FAVOURITE && feedAdapter.postList.isNotEmpty()) {
             /*
               Грязный хак для обработки ситуации, когда вкладка с избранным появляется,
               но сначала переходим на таб с профилем и из него - на таб с избранным.

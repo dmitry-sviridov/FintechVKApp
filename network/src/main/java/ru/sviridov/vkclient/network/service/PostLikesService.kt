@@ -3,7 +3,7 @@ package ru.sviridov.vkclient.network.service
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.sviridov.vkclient.network.dto.LikesResponse
+import ru.sviridov.vkclient.network.response.LikesResponse
 
 interface PostLikesService {
 

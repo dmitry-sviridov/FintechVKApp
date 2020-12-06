@@ -41,12 +41,16 @@ fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
 }
 
 fun NewsItem.getDateTime(): String? {
+    return postedAt.getTimeFromTimestamp()
+}
+
+fun Long.getTimeFromTimestamp(): String {
     val sdf = SimpleDateFormat("HH:mm MM/dd/yy", Locale.getDefault())
-    try {
-        val netDate = Date(postedAt * 1000)
-        return sdf.format(netDate)
+    return try {
+        val netDate = Date(this * 1000)
+        sdf.format(netDate)
     } catch (e: Exception) {
         e.printStackTrace()
-        return sdf.format(Date())
+        sdf.format(Date())
     }
 }

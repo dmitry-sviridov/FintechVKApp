@@ -12,8 +12,20 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_profile_bg"
+        android:padding="1dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/isOnlineMarker"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/online_marker"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarView"
+        app:layout_constraintEnd_toEndOf="@+id/avatarView" />
 
     <TextView
         android:id="@+id/commentWriterTitleTextView"
@@ -47,8 +59,8 @@
         android:layout_marginEnd="16dp"
         app:drawableLeftCompat="@drawable/ic_social_like_disabled"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="32"
-        app:layout_constraintTop_toBottomOf="@+id/commentItemTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/commentItemTextView"
+        tools:text="32" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,8 +8,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.sviridov.component.feeditem.model.NewsItem
-import ru.sviridov.vkclient.feature_newsfeed.FeedItemsDirection
-import ru.sviridov.vkclient.feature_newsfeed.domain.NewsFeedRepository
+import ru.sviridov.vkclient.feature.newsfeed.FeedItemsDirection
+import ru.sviridov.vkclient.feature.newsfeed.domain.NewsFeedRepository
 import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewActions
 import ru.sviridov.vkclient.ui.presentation.mvi.newsfeed.FeedViewState
 import javax.inject.Inject

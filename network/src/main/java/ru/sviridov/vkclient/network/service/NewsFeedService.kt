@@ -4,7 +4,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.sviridov.vkclient.network.NetworkConstants
-import ru.sviridov.vkclient.network.dto.NewsResponse
+import ru.sviridov.vkclient.network.response.NewsResponse
 
 interface NewsFeedService {
 

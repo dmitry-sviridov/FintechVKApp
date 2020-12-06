@@ -48,6 +48,9 @@ class CommentAdapter(val actionHandler: CommentAdapterActionHandler) :
                 itemView.commentItemTextView.text = item.textContent
                 itemView.socialLikesView.text = item.likesCount.toString()
 
+                if (item.ownerOnline) {
+                    itemView.isOnlineMarker.visibility = View.VISIBLE
+                }
             }
         }
     }

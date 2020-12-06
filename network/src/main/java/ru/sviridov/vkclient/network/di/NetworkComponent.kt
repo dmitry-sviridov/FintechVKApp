@@ -3,6 +3,7 @@ package ru.sviridov.vkclient.network.di
 import dagger.Component
 import ru.sviridov.vkclient.network.service.NewsFeedService
 import ru.sviridov.vkclient.network.service.PostLikesService
+import ru.sviridov.vkclient.network.service.ProfileInfoService
 import ru.sviridov.vkclient.network.service.WallService
 import javax.inject.Singleton
 
@@ -17,4 +18,5 @@ interface NetworkComponent {
     fun getNewsFeedService(): NewsFeedService
     fun getPostLikesService(): PostLikesService
     fun getWallService(): WallService
+    fun getProfileInfoService(): ProfileInfoService
 }

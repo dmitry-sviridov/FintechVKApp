@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cardview_light_background"
+    android:clickable="true"
+    android:focusable="true"
     tools:context=".presentation.fragments.comments.PostCommentsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
