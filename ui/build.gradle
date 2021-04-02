@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        consumerProguardFiles "consumer-rules.pro"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation(
+        project(path: ':network'),
+        project(path: ':core'),
+        project(path: ':component-feeditem-model'),
+        project(path: ':component-profile-model'),
+        project(path: ':component-comment-model'),
+        project(path: ':feature-newsfeed'),
+        project(path: ':feature-profile'),
+
+        "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+
+        "androidx.core:core-ktx:$androidXCoreKtxVersion",
+        "androidx.fragment:fragment-ktx:$androidXFragmentKtxVersion",
+
+        "androidx.appcompat:appcompat:$androidXAppCompatVersion",
+        "com.google.android.material:material:$materialVersion",
+
+        "androidx.constraintlayout:constraintlayout:$constraintVersion",
+        "androidx.recyclerview:recyclerview:$recyclerVersion",
+        "androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshVersion",
+
+        // JSON
+        "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
+
+        // Glide
+        "com.github.bumptech.glide:glide:$glideVersion",
+
+        // RX
+        "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion",
+        "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion",
+
+        //Room
+        "androidx.room:room-runtime:$roomVersion",
+        "androidx.room:room-ktx:$roomVersion",
+        "androidx.room:room-rxjava2:$roomVersion",
+
+        // Dagger
+        "com.google.dagger:dagger:$dagger2Version"
+    )
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+
+
+    kapt "com.google.dagger:dagger-compiler:$dagger2Version"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+}

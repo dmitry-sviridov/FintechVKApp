@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:parentTag="ru.sviridov.vkclient.ui.presentation.layout.FeedItemLayout">
+
+    <!--    region Feed title-->
+    <ImageView
+        android:id="@+id/avatarView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="8dp"
+        tools:src="@mipmap/img" />
+
+    <TextView
+        android:id="@+id/postWriterTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textStyle="bold"
+        tools:text="Иван Иванович" />
+
+    <TextView
+        android:id="@+id/postCreatedAgoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="2020-20-20 20:20:20" />
+
+    <ImageView
+        android:id="@+id/postItemMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="64dp"
+        android:src="@drawable/ic_feed_item_menu_gray_24" />
+
+    <!--    endregion-->
+    <!--    region Content (text, image)-->
+    <TextView
+        android:id="@+id/postItemTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        tools:text="Ехал Грека через реку" />
+
+    <ImageView
+        android:id="@+id/postImageContainerView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        tools:src="@drawable/ic_shit" />
+    <!--    endregion-->
+    <!--    region SocialBlock-->
+    <TextView
+        android:id="@+id/socialLikesView"
+        style="@style/news_feed_social_view"
+        android:layout_marginStart="16dp"
+        app:drawableLeftCompat="@drawable/ic_social_like_disabled"
+        tools:text="500" />
+
+    <TextView
+        android:id="@+id/socialCommentsView"
+        style="@style/news_feed_social_view"
+        app:drawableLeftCompat="@drawable/ic_social_comments"
+        tools:text="40" />
+
+    <TextView
+        android:id="@+id/socialRepostsView"
+        style="@style/news_feed_social_view"
+        app:drawableLeftCompat="@drawable/ic_social_repost_disabled"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/socialViewsCountView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        app:drawableLeftCompat="@drawable/ic_social_views_count"
+        tools:text="753" />
+    <!--    endregion-->
+
+</merge>

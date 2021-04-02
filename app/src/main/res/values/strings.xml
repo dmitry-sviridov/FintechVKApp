@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">VkClient</string>
+    <string name="newsfeed_error_dialog_text">There is an error during response handling</string>
+    <string name="newsfeed_error_dialog_title">Error</string>
+    <string name="login_button_text">Войти</string>
+
+    <integer name="com_vk_sdk_AppId">7640501</integer>
+</resources>

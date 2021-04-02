@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="social_buttons_grey">#D8D8D8</color>
+    <color name="divider_grey">#EFEFEF</color>
+    <color name="swipe_to_delete">#FFCCBC</color>
+    <color name="swipe_to_like">#C8E6C9</color>
+    <color name="swipe_to_dislike">#F48FB1</color>
+    <color name="bottom_navigation_background_color">#F8F8F8</color>
+    <color name="details_fragment_background_color">#E43F3D3D</color>
+</resources>

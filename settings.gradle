@@ -1,0 +1,11 @@
+include ':component-profile-model'
+include ':component-comment-model'
+include ':feature-auth'
+include ':feature-profile'
+include ':feature-newsfeed'
+include ':core'
+include ':component-feeditem-model'
+include ':network'
+include ':ui'
+include ':app'
+rootProject.name = "VkClient"
